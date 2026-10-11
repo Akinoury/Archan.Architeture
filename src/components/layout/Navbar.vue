@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { useDevModeStore } from '@/stores/devMode'
 import BaseButton from '@/components/ui/BaseButton.vue'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
-const devModeStore = useDevModeStore()
 
 const mobileMenuOpen = ref(false)
 
@@ -37,15 +35,16 @@ async function handleLogout() {
   authStore.logout()
   await router.push({ name: 'Home' })
 }
+
+// Keep the menu closed when navigating
+watch(() => route.fullPath, () => closeMobileMenu())
 </script>
 
 <template>
   <nav class="navbar" role="navigation" aria-label="Navegação principal">
-    <div class="nav-brand-container">
-      <RouterLink to="/" class="nav-brand" aria-label="Archan Arquiteture - Início">
-        <span class="special-font">Archan</span>
-      </RouterLink>
-    </div>
+    <RouterLink to="/" class="nav-brand" aria-label="Archan Arquiteture - Início">
+      Archan
+    </RouterLink>
 
     <button
       class="nav-toggle"
@@ -60,120 +59,88 @@ async function handleLogout() {
       <span></span>
     </button>
 
-    <ul
-      id="mobile-menu"
-      class="nav-links"
-      :class="{ open: mobileMenuOpen }"
-      role="menubar"
-    >
-      <li v-for="link in navLinks" :key="link.name" role="none">
+    <ul id="mobile-menu" class="nav-links" :class="{ open: mobileMenuOpen }">
+      <li v-for="link in navLinks" :key="link.name">
         <RouterLink
           :to="link.path"
           class="nav-link"
           :class="{ active: isActive(link.path) }"
-          @click="closeMobileMenu"
-          role="menuitem"
         >
           {{ link.name }}
         </RouterLink>
       </li>
 
-      <li v-if="authStore.isAuthenticated" role="none">
+      <li v-if="authStore.isAuthenticated">
         <RouterLink
           to="/dashboard"
           class="nav-link"
-          @click="closeMobileMenu"
-          role="menuitem"
+          :class="{ active: isActive('/dashboard') }"
         >
           Dashboard
         </RouterLink>
       </li>
 
-      <li role="none">
-        <div class="nav-actions" role="group" aria-label="Ações do usuário">
-          <RouterLink
-            v-if="!authStore.isAuthenticated"
-            to="/login"
-            class="btn btn-ghost btn-sm"
-            @click="closeMobileMenu"
-          >
-            Entrar
-          </RouterLink>
-          <RouterLink
-            v-if="!authStore.isAuthenticated"
-            to="/register"
-            class="btn btn-accent btn-sm"
-            @click="closeMobileMenu"
-          >
-            Cadastrar
-          </RouterLink>
-
-          <div v-else class="nav-actions" style="flex-direction: row;">
-            <BaseButton
-              variant="ghost"
-              size="sm"
-              @click="handleLogout"
-            >
-              Sair
-            </BaseButton>
-            <span class="user-name" style="font-size: 0.85rem; color: var(--bs-dark-gray);">
-              {{ authStore.user?.name }}
-            </span>
-          </div>
+      <!-- Auth actions inside the mobile sidebar -->
+      <li class="nav-mobile-auth">
+        <div class="nav-actions">
+          <template v-if="!authStore.isAuthenticated">
+            <RouterLink to="/login" class="btn btn-ghost btn-sm">Entrar</RouterLink>
+            <RouterLink to="/register" class="btn btn-accent btn-sm">Cadastrar</RouterLink>
+          </template>
+          <template v-else>
+            <span class="user-name">{{ authStore.user?.name }}</span>
+            <BaseButton variant="ghost" size="sm" @click="handleLogout">Sair</BaseButton>
+          </template>
         </div>
       </li>
     </ul>
 
-    <div class="nav-actions desktop-only" role="group" aria-label="Ações do usuário">
-      <RouterLink
-        v-if="!authStore.isAuthenticated"
-        to="/login"
-        class="btn btn-ghost btn-sm"
-      >
-        Entrar
-      </RouterLink>
-      <RouterLink
-        v-if="!authStore.isAuthenticated"
-        to="/register"
-        class="btn btn-accent btn-sm"
-      >
-        Cadastrar
-      </RouterLink>
-
-      <div v-else style="display: flex; align-items: center; gap: var(--bs-spacing-sm);">
+    <!-- Auth actions, desktop only -->
+    <div class="nav-actions desktop-only">
+      <template v-if="!authStore.isAuthenticated">
+        <RouterLink to="/login" class="nav-login">Entrar</RouterLink>
+        <RouterLink to="/register" class="btn btn-accent btn-sm">Cadastrar</RouterLink>
+      </template>
+      <template v-else>
         <RouterLink
           to="/dashboard"
-          class="btn btn-ghost btn-sm"
+          class="nav-link nav-link-inline"
+          :class="{ active: isActive('/dashboard') }"
         >
           Dashboard
         </RouterLink>
-        <span class="user-name" style="font-size: 0.85rem; color: var(--bs-dark-gray);">
-          {{ authStore.user?.name }}
-        </span>
-        <BaseButton
-          variant="ghost"
-          size="sm"
-          @click="handleLogout"
-        >
-          Sair
-        </BaseButton>
-      </div>
+        <span class="user-name">{{ authStore.user?.name }}</span>
+        <BaseButton variant="ghost" size="sm" @click="handleLogout">Sair</BaseButton>
+      </template>
     </div>
   </nav>
 </template>
 
 <style scoped>
-.nav-brand-container {
-  flex-shrink: 0;
+.navbar {
+  height: var(--bs-nav-height);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--bs-spacing-sm);
+  border-bottom: 1px solid var(--bs-light-gray);
+  position: sticky;
+  top: 0;
+  background-color: rgba(252, 249, 242, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 1000;
+  padding: 0 var(--bs-section-px);
 }
 
 .nav-brand {
-  font-weight: 700;
-  font-size: 1.25rem;
+  font-family: var(--bs-font-special);
+  font-size: 1.75rem;
+  line-height: 1;
   color: var(--bs-text-color);
   text-decoration: none;
-  display: flex;
-  align-items: center;
+  flex-shrink: 0;
+  transition: color var(--bs-transition), opacity var(--bs-transition);
 }
 
 .nav-brand:hover {
@@ -190,46 +157,73 @@ async function handleLogout() {
   padding: 0;
 }
 
-.nav-links a {
-  font-size: 0.85rem;
+.nav-link {
+  font-size: 0.82rem;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-weight: 400;
+  letter-spacing: 0.12em;
+  font-weight: 500;
   padding: 0.5rem 0;
   position: relative;
   color: var(--bs-text-color);
   text-decoration: none;
+  transition: color var(--bs-transition);
 }
 
-.nav-links a::after {
+.nav-link::after {
   content: '';
   position: absolute;
-  bottom: 0;
   left: 0;
+  bottom: 0.2rem;
   width: 0;
   height: 1px;
   background: var(--bs-accent-color);
   transition: width var(--bs-transition);
 }
 
-.nav-links a:hover::after,
-.nav-links a.active::after {
+.nav-link:hover::after,
+.nav-link.active::after {
   width: 100%;
 }
 
-.nav-links a:hover {
-  opacity: 1;
+.nav-link:hover,
+.nav-link.active {
   color: var(--bs-accent-color);
+  opacity: 1;
 }
 
-.nav-links a.active {
+.nav-link-inline {
+  font-size: 0.82rem;
+}
+
+.nav-login {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 500;
+  color: var(--bs-text-color);
+  text-decoration: none;
+  padding: 0.5rem 0.25rem;
+  transition: color var(--bs-transition);
+}
+
+.nav-login:hover {
   color: var(--bs-accent-color);
+  opacity: 1;
 }
 
 .nav-actions {
   display: flex;
   gap: var(--bs-spacing-sm);
   align-items: center;
+}
+
+.user-name {
+  font-size: 0.85rem;
+  color: var(--bs-dark-gray);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .nav-toggle {
@@ -239,22 +233,26 @@ async function handleLogout() {
   cursor: pointer;
   padding: 0.5rem;
   z-index: 1001;
+  width: 44px;
+  height: 44px;
   flex-direction: column;
-  justify-content: space-between;
-  width: 24px;
-  height: 18px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }
 
 .nav-toggle span {
   display: block;
-  width: 100%;
+  width: 24px;
   height: 2px;
+  margin: 0;
   background: var(--bs-text-color);
-  transition: var(--bs-transition);
+  border-radius: 2px;
+  transition: transform var(--bs-transition), opacity var(--bs-transition);
 }
 
 .nav-toggle[aria-expanded="true"] span:nth-child(1) {
-  transform: rotate(45deg) translate(5px, 5px);
+  transform: translateY(7px) rotate(45deg);
 }
 
 .nav-toggle[aria-expanded="true"] span:nth-child(2) {
@@ -262,7 +260,12 @@ async function handleLogout() {
 }
 
 .nav-toggle[aria-expanded="true"] span:nth-child(3) {
-  transform: rotate(-45deg) translate(5px, -5px);
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Auth actions inside the sidebar are hidden on desktop */
+.nav-mobile-auth {
+  display: none;
 }
 
 .desktop-only {
@@ -289,11 +292,11 @@ async function handleLogout() {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: var(--bs-spacing-lg);
+    gap: var(--bs-spacing-md);
     transform: translateX(100%);
     transition: transform var(--bs-transition-smooth);
     border-left: 1px solid var(--bs-light-gray);
-    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.1);
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.12);
     padding: var(--bs-spacing-xl) var(--bs-spacing-md);
     padding-bottom: calc(var(--bs-spacing-xl) + env(safe-area-inset-bottom));
     overflow-y: auto;
@@ -304,28 +307,37 @@ async function handleLogout() {
     transform: translateX(0);
   }
 
-  .nav-links a {
-    font-size: 1.25rem;
+  .nav-links li {
+    width: 100%;
+    text-align: center;
   }
 
-  .nav-links .nav-actions {
+  .nav-link {
+    display: inline-block;
+    font-size: 1.1rem;
+    padding: 0.5rem 0;
+  }
+
+  .nav-mobile-auth {
+    display: block;
+    margin-top: var(--bs-spacing-sm);
+    padding-top: var(--bs-spacing-md);
+    border-top: 1px solid var(--bs-light-gray);
+  }
+
+  .nav-mobile-auth .nav-actions {
     flex-direction: column;
     gap: var(--bs-spacing-sm);
     width: 100%;
+    padding: 0;
   }
 
-  .nav-links .nav-actions .btn {
+  .nav-mobile-auth .nav-actions .btn {
     width: 100%;
-    text-align: center;
   }
 
-  .nav-links li:not(:last-child) {
-    width: 100%;
-    text-align: center;
-  }
-
-  body.nav-open {
-    overflow: hidden;
+  .nav-mobile-auth .user-name {
+    max-width: none;
   }
 }
 
@@ -335,14 +347,8 @@ async function handleLogout() {
     padding-right: var(--bs-spacing-sm);
   }
 
-  .nav-links {
-    gap: var(--bs-spacing-md);
-    padding-left: var(--bs-spacing-sm);
-    padding-right: var(--bs-spacing-sm);
-  }
-
-  .nav-links a {
-    font-size: 1.125rem;
+  .nav-brand {
+    font-size: 1.5rem;
   }
 }
 </style>
