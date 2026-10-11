@@ -1,0 +1,153 @@
+// Archan Architecture - Main Stylesheet
+// Import order: variables -> bootstrap -> components -> utilities
+
+@import './variables';
+@import 'bootstrap/scss/bootstrap';
+@import './components';
+
+// Global resets and base styles
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--bs-font-primary);
+  background-color: var(--bs-bg-color);
+  color: var(--bs-text-color);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--bs-font-serif);
+  font-weight: 400;
+  margin-bottom: var(--bs-spacing-sm);
+  line-height: 1.15;
+}
+
+h1 {
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  letter-spacing: -0.01em;
+}
+
+h2 {
+  font-size: clamp(1.6rem, 3vw, 2.5rem);
+}
+
+h3 {
+  font-size: 1.4rem;
+}
+
+p {
+  font-size: 1.05rem;
+  margin-bottom: var(--bs-spacing-md);
+  color: var(--bs-dark-gray);
+  line-height: 1.85;
+}
+
+a {
+  color: var(--bs-text-color);
+  text-decoration: none;
+  transition: opacity var(--bs-transition);
+}
+
+a:hover {
+  opacity: 0.65;
+}
+
+// Utility classes
+.container-custom {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--bs-section-px);
+}
+
+.section {
+  padding: var(--bs-spacing-xl) 0;
+}
+
+.section-alt {
+  background: var(--bs-light-gray);
+}
+
+.section-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--bs-accent-color);
+  margin-bottom: var(--bs-spacing-sm);
+  display: block;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--bs-light-gray);
+  margin: var(--bs-spacing-lg) 0;
+}
+
+.special-font {
+  font-family: var(--bs-font-special);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 1;
+}
+
+.kicker {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--bs-accent-color);
+  display: block;
+  margin-bottom: var(--bs-spacing-sm);
+}
+
+// Reveal animation
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s var(--bs-transition-smooth), transform 0.8s var(--bs-transition-smooth);
+  will-change: opacity, transform;
+}
+
+.reveal.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+// Focus styles
+*:focus-visible {
+  outline: 2px solid var(--bs-accent-color);
+  outline-offset: 2px;
+}
+
+// Selection styles
+::selection {
+  background: var(--bs-accent-color);
+  color: var(--bs-white);
+}
+
+// Scrollbar styles
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bs-bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bs-accent-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bs-accent-hover);
+}

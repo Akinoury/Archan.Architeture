@@ -1,0 +1,72 @@
+// Archan Architecture - Design System
+// Variables matching the original CSS design
+
+// Fonts
+$font-primary: "Outfit", sans-serif;
+$font-serif: "Playfair Display", serif;
+$font-special: "UnifrakturMaguntia", cursive;
+
+// Colors
+$bg-color: #fcf9f2;
+$text-color: #382414;
+$light-gray: #eadecd;
+$dark-gray: #4a3424;
+$accent-color: #b58c49;
+$accent-hover: #9a7438;
+$white: #fff;
+$black: #000;
+
+// Spacing
+$spacing-xs: 0.5rem;
+$spacing-sm: 1rem;
+$spacing-md: 2rem;
+$spacing-lg: 4rem;
+$spacing-xl: 7rem;
+$section-px: clamp(1.5rem, 5vw, 4rem);
+$nav-height: 80px;
+
+// Shadows
+$card-shadow: 0 4px 24px rgba(56, 36, 20, 0.08);
+$card-shadow-hover: 0 12px 40px rgba(56, 36, 20, 0.18);
+$card-shadow-hover-strong: 0 12px 40px rgba(0, 0, 0, 0.06);
+
+// Transitions
+$transition: 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+$transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+$transition-slow: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+
+// Breakpoints (Desktop-first approach)
+$breakpoint-lg: 960px;
+$breakpoint-md: 768px;
+$breakpoint-sm: 600px;
+
+// Z-index layers
+$z-index-dropdown: 100;
+$z-index-sticky: 1000;
+$z-index-modal: 1100;
+$z-index-tooltip: 1200;
+$z-index-dev: 9999;
+
+// Export as CSS custom properties for Bootstrap integration
+:root {
+  --bs-font-primary: #{$font-primary};
+  --bs-font-serif: #{$font-serif};
+  --bs-font-special: #{$font-special};
+  --bs-bg-color: #{$bg-color};
+  --bs-text-color: #{$text-color};
+  --bs-light-gray: #{$light-gray};
+  --bs-dark-gray: #{$dark-gray};
+  --bs-accent-color: #{$accent-color};
+  --bs-accent-hover: #{$accent-hover};
+  --bs-spacing-xs: #{$spacing-xs};
+  --bs-spacing-sm: #{$spacing-sm};
+  --bs-spacing-md: #{$spacing-md};
+  --bs-spacing-lg: #{$spacing-lg};
+  --bs-spacing-xl: #{$spacing-xl};
+  --bs-section-px: #{$section-px};
+  --bs-nav-height: #{$nav-height};
+  --bs-card-shadow: #{$card-shadow};
+  --bs-card-shadow-hover: #{$card-shadow-hover};
+  --bs-transition: #{$transition};
+  --bs-transition-smooth: #{$transition-smooth};
+}

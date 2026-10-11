@@ -1,0 +1,120 @@
+// Button Component Styles
+
+.btn {
+  display: inline-block;
+  padding: 0.85rem 2rem;
+  border: 1px solid var(--bs-text-color);
+  background: transparent;
+  color: var(--bs-text-color);
+  font-family: var(--bs-font-primary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all var(--bs-transition);
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.btn:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: var(--bs-text-color);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--bs-transition);
+  z-index: -1;
+}
+
+.btn:hover:after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.btn:hover {
+  color: var(--bs-bg-color);
+  opacity: 1;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--bs-accent-color);
+  outline-offset: 2px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn:disabled:after {
+  display: none;
+}
+
+// Accent button
+.btn-accent {
+  background: var(--bs-accent-color);
+  border-color: var(--bs-accent-color);
+  color: var(--bs-white);
+}
+
+.btn-accent:after {
+  background: var(--bs-accent-hover);
+}
+
+.btn-accent:hover {
+  color: var(--bs-white);
+  border-color: var(--bs-accent-hover);
+}
+
+// Ghost button
+.btn-ghost {
+  border-color: rgba(56, 36, 20, 0.3);
+}
+
+.btn-ghost:after {
+  background: var(--bs-text-color);
+}
+
+.btn-ghost:hover {
+  color: var(--bs-bg-color);
+}
+
+// Full width button
+.btn-full {
+  width: 100%;
+  text-align: center;
+  display: block;
+}
+
+// Button sizes
+.btn-sm {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.75rem;
+}
+
+.btn-lg {
+  padding: 1.125rem 2.5rem;
+  font-size: 0.95rem;
+}
+
+// Icon button
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-icon-only {
+  padding: 0.85rem;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+}

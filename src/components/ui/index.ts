@@ -1,0 +1,10 @@
+// UI Components barrel export
+export { default as BaseButton } from './BaseButton.vue'
+export { default as BaseInput } from './BaseInput.vue'
+export { default as BaseCard } from './BaseCard.vue'
+export { default as ProjectCard } from './ProjectCard.vue'
+export { default as BlogCard } from './BlogCard.vue'
+export { default as ImageSlider } from './ImageSlider.vue'
+export { default as ToastContainer } from './ToastContainer.vue'
+export { default as Modal } from './Modal.vue'
+export { default as DevIndicator } from './DevIndicator.vue'
