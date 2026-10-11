@@ -1,4 +1,4 @@
-name = "archan-architecture"
+name = "archan-architeture"
 compatibility_date = "2026-10-11"
 
 [assets]
@@ -18,3 +18,4 @@ persist = true
 enabled = false
 head_sampling_rate = 1
 persist = true
+
