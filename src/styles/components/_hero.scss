@@ -52,6 +52,7 @@
 
 .hero-content h1 {
   margin-bottom: var(--bs-spacing-md);
+  line-height: 1.2;
 }
 
 .hero-content p {
@@ -60,6 +61,8 @@
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+  color: var(--bs-dark-gray);
+  line-height: 1.7;
 }
 
 .hero-cta {
@@ -76,18 +79,64 @@
   max-width: 280px;
 }
 
-@media (max-width: #{$breakpoint-sm}) {
-  .hero-content {
-    padding: var(--bs-spacing-md);
+@media (max-width: #{$breakpoint-lg}) {
+  .hero {
+    min-height: auto;
+    padding: var(--bs-spacing-xl) var(--bs-section-px);
   }
+  
+  .hero-content {
+    padding: clamp(1.75rem, 5vw, 3rem);
+  }
+  
+  .hero-content h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+  
+  .hero-content p {
+    font-size: 1rem;
+  }
+}
 
+@media (max-width: #{$breakpoint-md}) {
+  .hero {
+    min-height: auto;
+    padding: var(--bs-spacing-lg) var(--bs-section-px);
+  }
+  
+  .hero-content {
+    padding: var(--bs-spacing-lg);
+  }
+  
   .hero-cta {
     flex-direction: column;
     align-items: center;
   }
-
+  
   .hero-cta .btn {
     width: 100%;
     max-width: none;
+  }
+}
+
+@media (max-width: #{$breakpoint-sm}) {
+  .hero {
+    padding: var(--bs-spacing-lg) var(--bs-spacing-md);
+  }
+  
+  .hero-content {
+    padding: var(--bs-spacing-md);
+  }
+  
+  .hero-content h1 {
+    font-size: clamp(1.75rem, 6vw, 2.5rem);
+  }
+  
+  .hero-content p {
+    font-size: 0.95rem;
+  }
+  
+  .hero-cta {
+    gap: var(--bs-spacing-xs);
   }
 }

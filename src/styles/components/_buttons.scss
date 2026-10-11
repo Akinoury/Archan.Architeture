@@ -1,13 +1,17 @@
 // Button Component Styles
 
 .btn {
-  display: inline-block;
-  padding: 0.85rem 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.75rem;
   border: 1px solid var(--bs-text-color);
   background: transparent;
   color: var(--bs-text-color);
   font-family: var(--bs-font-primary);
-  font-size: 0.85rem;
+  font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -17,6 +21,8 @@
   z-index: 0;
   text-align: center;
   white-space: nowrap;
+  min-height: var(--bs-touch-target-min);
+  min-width: var(--bs-touch-target-min);
 }
 
 .btn:after {
@@ -73,6 +79,10 @@
   border-color: var(--bs-accent-hover);
 }
 
+.btn-accent:focus-visible {
+  outline-color: var(--bs-accent-hover);
+}
+
 // Ghost button
 .btn-ghost {
   border-color: rgba(56, 36, 20, 0.3);
@@ -97,11 +107,13 @@
 .btn-sm {
   padding: 0.5rem 1.25rem;
   font-size: 0.75rem;
+  min-height: var(--bs-touch-target-min);
 }
 
 .btn-lg {
   padding: 1.125rem 2.5rem;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  min-height: var(--bs-touch-target-comfortable);
 }
 
 // Icon button
@@ -113,8 +125,62 @@
 }
 
 .btn-icon-only {
-  padding: 0.85rem;
+  padding: 0.75rem;
   border-radius: 50%;
-  width: 44px;
-  height: 44px;
+  width: var(--bs-touch-target-comfortable);
+  height: var(--bs-touch-target-comfortable);
+  min-width: var(--bs-touch-target-comfortable);
+  min-height: var(--bs-touch-target-comfortable);
+}
+
+// Loading state
+.btn.loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.btn.loading .spinner {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// Tablet adjustments
+@media (max-width: #{$breakpoint-lg}) {
+  .btn {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.875rem;
+  }
+  
+  .btn-lg {
+    padding: 1rem 2rem;
+  }
+}
+
+// Mobile
+@media (max-width: #{$breakpoint-sm}) {
+  .btn {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.875rem;
+    min-height: var(--bs-touch-target-comfortable);
+  }
+  
+  .btn-sm {
+    padding: 0.625rem 1rem;
+    font-size: 0.8125rem;
+    min-height: var(--bs-touch-target-comfortable);
+  }
+  
+  .btn-lg {
+    padding: 1rem 1.5rem;
+    font-size: 0.9375rem;
+  }
+  
+  .btn-full {
+    width: 100%;
+  }
 }

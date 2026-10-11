@@ -42,11 +42,12 @@
   letter-spacing: 0.1em;
   margin-bottom: 0.4rem;
   color: var(--bs-dark-gray);
+  font-weight: 600;
 }
 
 .form-control {
   width: 100%;
-  padding: 0.85rem 1rem;
+  padding: 0.875rem 1rem;
   border: 1px solid var(--bs-light-gray);
   border-bottom: 2px solid #ccc;
   font-family: var(--bs-font-primary);
@@ -54,7 +55,8 @@
   background: var(--bs-bg-color);
   color: var(--bs-text-color);
   transition: border-color var(--bs-transition), background var(--bs-transition);
-  border-radius: 0;
+  border-radius: 4px;
+  min-height: var(--bs-touch-target-min);
 }
 
 .form-control:focus {
@@ -62,12 +64,38 @@
   border-bottom-color: var(--bs-accent-color);
   background: var(--bs-white);
   border-color: var(--bs-accent-color);
-  box-shadow: none;
+  box-shadow: 0 0 0 3px rgba(181, 140, 73, 0.15);
 }
 
 .form-control::placeholder {
   color: var(--bs-dark-gray);
   opacity: 0.6;
+}
+
+.form-control:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--bs-light-gray);
+}
+
+.form-control[aria-invalid="true"] {
+  border-color: #c00;
+  border-bottom-color: #c00;
+}
+
+.form-error {
+  display: block;
+  color: #c00;
+  font-size: 0.8rem;
+  margin-top: 0.35rem;
+}
+
+.form-hint {
+  display: block;
+  color: var(--bs-dark-gray);
+  font-size: 0.8rem;
+  margin-top: 0.35rem;
+  opacity: 0.7;
 }
 
 .auth-footer-link {
@@ -87,8 +115,35 @@
   opacity: 0.8;
 }
 
-@media (max-width: #{$breakpoint-sm}) {
+@media (max-width: #{$breakpoint-lg}) {
+  .auth-page {
+    padding: var(--bs-spacing-lg) var(--bs-spacing-md);
+  }
+  
   .auth-box {
+    padding: clamp(1.75rem, 5vw, 3rem);
+  }
+}
+
+@media (max-width: #{$breakpoint-sm}) {
+  .auth-page {
     padding: var(--bs-spacing-md);
+    align-items: flex-start;
+    padding-top: calc(var(--bs-nav-height) + var(--bs-spacing-lg));
+    min-height: 100vh;
+  }
+  
+  .auth-box {
+    padding: var(--bs-spacing-lg);
+    max-width: 100%;
+  }
+  
+  .auth-box h1 {
+    font-size: 1.75rem;
+  }
+  
+  .form-control {
+    padding: 0.875rem 1rem;
+    font-size: 1rem; /* Prevents zoom on iOS */
   }
 }

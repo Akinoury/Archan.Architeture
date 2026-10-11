@@ -32,10 +32,33 @@
   display: none;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all var(--bs-transition);
+  white-space: nowrap;
+  min-height: var(--bs-touch-target-min);
+  min-width: var(--bs-touch-target-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dev-indicator:hover {
+  background: var(--bs-accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+}
+
+.dev-indicator.active {
+  background: #27ae60;
+}
+
+.dev-indicator.active:hover {
+  background: #219a52;
 }
 
 body.dev-mode .dev-indicator {
-  display: block;
+  display: flex !important;
 }
 
 // Dev mode contenteditable styles
@@ -67,6 +90,7 @@ body.dev-mode [contenteditable="true"]:focus {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  max-width: 100%;
 }
 
 .toast {
@@ -138,6 +162,8 @@ body.dev-mode [contenteditable="true"]:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: var(--bs-spacing-sm);
 }
 
 .modal-title {
@@ -153,13 +179,15 @@ body.dev-mode [contenteditable="true"]:focus {
   color: var(--bs-dark-gray);
   line-height: 1;
   padding: 0;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   transition: background var(--bs-transition), color var(--bs-transition);
+  min-width: var(--bs-touch-target-min);
+  min-height: var(--bs-touch-target-min);
 }
 
 .modal-close:hover {
@@ -192,5 +220,62 @@ body.dev-mode [contenteditable="true"]:focus {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.2s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-from .modal-content,
+.modal-leave-to .modal-content {
+  transform: translateY(20px);
+}
+
+// Utility classes
+.container-custom {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--bs-section-px);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Responsive spacing
+@media (max-width: #{$breakpoint-lg}) {
+  .container-custom {
+    padding: 0 var(--bs-spacing-lg);
+  }
+}
+
+@media (max-width: #{$breakpoint-md}) {
+  .container-custom {
+    padding: 0 var(--bs-spacing-md);
+  }
+}
+
+@media (max-width: #{$breakpoint-sm}) {
+  .container-custom {
+    padding: 0 var(--bs-spacing-sm);
   }
 }

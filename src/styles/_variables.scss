@@ -36,9 +36,14 @@ $transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 $transition-slow: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 
 // Breakpoints (Desktop-first approach)
+$breakpoint-xl: 1200px;
 $breakpoint-lg: 960px;
 $breakpoint-md: 768px;
-$breakpoint-sm: 600px;
+$breakpoint-sm: 480px;
+
+// Touch targets
+$touch-target-min: 44px;
+$touch-target-comfortable: 48px;
 
 // Z-index layers
 $z-index-dropdown: 100;
@@ -69,4 +74,6 @@ $z-index-dev: 9999;
   --bs-card-shadow-hover: #{$card-shadow-hover};
   --bs-transition: #{$transition};
   --bs-transition-smooth: #{$transition-smooth};
+  --bs-touch-target-min: #{$touch-target-min};
+  --bs-touch-target-comfortable: #{$touch-target-comfortable};
 }
