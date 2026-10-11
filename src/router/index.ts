@@ -45,6 +45,18 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'Cadastro - Archan Arquiteture', guest: true }
   },
   {
+    path: '/sobre',
+    name: 'About',
+    component: () => import('@/views/AboutView.vue'),
+    meta: { title: 'Sobre Nós - Archan Arquitetura' }
+  },
+  {
+    path: '/contato',
+    name: 'Contact',
+    component: () => import('@/views/ContactView.vue'),
+    meta: { title: 'Contato - Archan Arquitetura' }
+  },
+  {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('@/views/DashboardView.vue'),

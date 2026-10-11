@@ -1,37 +1,37 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useProjectsStore } from '@/stores/projects'
-import ProjectCard from '@/components/ui/ProjectCard.vue'
 
 const projectsStore = useProjectsStore()
-const heroProject = projectsStore.heroProject
-const featuredProjects = projectsStore.featuredProjects
+
+// Use the hero project's image as the background of the brand hero.
+const heroImage = computed(() => projectsStore.heroProject?.image)
 </script>
 
 <template>
   <section class="hero" aria-labelledby="hero-title">
     <img
-      v-if="heroProject"
-      :src="heroProject.image"
-      :alt="`Projeto em destaque: ${heroProject.title}`"
+      v-if="heroImage"
+      :src="heroImage"
+      alt=""
       class="hero-bg-img"
       aria-hidden="true"
     />
 
     <div class="hero-content reveal">
-      <span class="kicker">Projeto em Destaque</span>
-      <h1 id="hero-title" v-if="heroProject">{{ heroProject.title }}</h1>
-      <p v-if="heroProject">{{ heroProject.description }}</p>
+      <span class="kicker">Arquitetura &amp; Design</span>
+      <h1 id="hero-title">Archan Arquitetura</h1>
+      <p>
+        Estúdio de arquitetura moderna focado em projetos funcionais,
+        estéticos e orientados ao investimento imobiliário.
+      </p>
 
       <div class="hero-cta">
-        <RouterLink
-          v-if="heroProject"
-          :to="`/projetos/${heroProject.id}`"
-          class="btn btn-accent"
-        >
-          Ver Projeto
+        <RouterLink to="/sobre" class="btn btn-accent">
+          Sobre Nós
         </RouterLink>
         <RouterLink to="/projetos" class="btn btn-ghost">
-          Ver Todos
+          Ver Projetos
         </RouterLink>
       </div>
     </div>
