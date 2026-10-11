@@ -57,6 +57,24 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'Contato - Archan Arquitetura' }
   },
   {
+    path: '/privacidade',
+    name: 'Privacy',
+    component: () => import('@/views/PrivacyView.vue'),
+    meta: { title: 'Política de Privacidade - Archan Arquitetura' }
+  },
+  {
+    path: '/termos',
+    name: 'Terms',
+    component: () => import('@/views/TermsView.vue'),
+    meta: { title: 'Termos de Uso - Archan Arquitetura' }
+  },
+  {
+    path: '/cookies',
+    name: 'Cookies',
+    component: () => import('@/views/CookiesView.vue'),
+    meta: { title: 'Política de Cookies - Archan Arquitetura' }
+  },
+  {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('@/views/DashboardView.vue'),
@@ -76,9 +94,11 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition
-    } else {
-      return { top: 0 }
     }
+    if (to.hash) {
+      return { el: to.hash, behavior: 'smooth' }
+    }
+    return { top: 0 }
   }
 })
 

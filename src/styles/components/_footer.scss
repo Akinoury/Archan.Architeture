@@ -54,6 +54,24 @@ footer {
   opacity: 1;
 }
 
+.footer-link-btn {
+  display: block;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  color: rgba(252, 249, 242, 0.5);
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
+  cursor: pointer;
+  transition: color var(--bs-transition);
+}
+
+.footer-link-btn:hover {
+  color: var(--bs-accent-color);
+}
+
 .footer-bottom {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: var(--bs-spacing-sm);
@@ -94,7 +112,8 @@ footer {
   }
 
   .footer-col a,
-  .footer-col span {
+  .footer-col span,
+  .footer-link-btn {
     display: inline-block;
     margin: 0 0.5rem 0.3rem;
   }
@@ -136,7 +155,8 @@ footer {
   }
 
   .footer-col a,
-  .footer-col span {
+  .footer-col span,
+  .footer-link-btn {
     font-size: 0.8rem;
     margin: 0 0.375rem 0.25rem;
   }

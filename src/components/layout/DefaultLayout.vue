@@ -3,6 +3,7 @@ import Navbar from './Navbar.vue'
 import Footer from './Footer.vue'
 import ToastContainer from '@/components/ui/ToastContainer.vue'
 import Modal from '@/components/ui/Modal.vue'
+import CookieConsent from '@/components/ui/CookieConsent.vue'
 import { useUIStore } from '@/stores/ui'
 
 const uiStore = useUIStore()
@@ -19,6 +20,8 @@ const uiStore = useUIStore()
     <Footer />
 
     <ToastContainer />
+
+    <CookieConsent />
 
     <Teleport to="body">
       <Modal

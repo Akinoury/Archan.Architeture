@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useConsentStore } from '@/stores/consent'
+
 const currentYear = new Date().getFullYear()
+const consent = useConsentStore()
 
 const footerLinks = {
   company: [
@@ -46,6 +49,9 @@ const footerLinks = {
           <RouterLink v-for="link in footerLinks.legal" :key="link.label" :to="link.to">
             {{ link.label }}
           </RouterLink>
+          <button type="button" class="footer-link-btn" @click="consent.openPreferences()">
+            Preferências de cookies
+          </button>
         </nav>
 
         <nav class="footer-col" aria-label="Redes sociais">

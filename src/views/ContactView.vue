@@ -25,6 +25,8 @@ const errors = reactive({
 })
 
 const sending = ref(false)
+const consentAccepted = ref(false)
+const consentError = ref('')
 
 const contactInfo = [
   { icon: '✉️', label: 'E-mail', value: 'contato@archanarquitetura.com', href: 'mailto:contato@archanarquitetura.com' },
@@ -41,7 +43,10 @@ function validate(): boolean {
   errors.message = form.message.trim().length >= 10
     ? ''
     : 'Escreva uma mensagem com pelo menos 10 caracteres.'
-  return !errors.name && !errors.email && !errors.message
+  consentError.value = consentAccepted.value
+    ? ''
+    : 'É necessário aceitar a Política de Privacidade para enviar.'
+  return !errors.name && !errors.email && !errors.message && !consentError.value
 }
 
 async function handleSubmit() {
@@ -64,6 +69,8 @@ async function handleSubmit() {
   errors.name = ''
   errors.email = ''
   errors.message = ''
+  consentAccepted.value = false
+  consentError.value = ''
 }
 </script>
 
@@ -143,6 +150,19 @@ async function handleSubmit() {
               <span v-if="errors.message" class="form-error" role="alert">
                 {{ errors.message }}
               </span>
+            </div>
+
+            <div class="contact-consent">
+              <label class="contact-consent-label">
+                <input v-model="consentAccepted" type="checkbox" :aria-invalid="!!consentError" />
+                <span>
+                  Li e concordo com a
+                  <RouterLink to="/privacidade">Política de Privacidade</RouterLink>
+                  e autorizo o tratamento dos meus dados para responder a este contato.
+                  <span class="text-danger" aria-hidden="true">*</span>
+                </span>
+              </label>
+              <span v-if="consentError" class="form-error" role="alert">{{ consentError }}</span>
             </div>
 
             <BaseButton
@@ -266,6 +286,39 @@ async function handleSubmit() {
   color: #c00;
   font-size: 0.8rem;
   margin-top: 0.35rem;
+}
+
+.contact-consent {
+  margin-bottom: var(--bs-spacing-md);
+}
+
+.contact-consent-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--bs-dark-gray);
+  cursor: pointer;
+}
+
+.contact-consent-label input {
+  margin-top: 0.2rem;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  accent-color: var(--bs-accent-color);
+  cursor: pointer;
+}
+
+.contact-consent-label a {
+  color: var(--bs-accent-color);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.contact-consent-label .text-danger {
+  color: #c00;
 }
 
 @media (max-width: 960px) {

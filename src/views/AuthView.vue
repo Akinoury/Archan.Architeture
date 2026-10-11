@@ -33,6 +33,8 @@ const form = ref<FormData>({
 const errors = ref<Partial<Record<keyof FormData, string[]>>>({})
 const submitting = ref(false)
 const remember = ref(true)
+const acceptTerms = ref(false)
+const termsError = ref('')
 
 const nameRules = [required('Nome é obrigatório'), minLength(2, 'Nome deve ter pelo menos 2 caracteres')]
 const emailRules = [required('E-mail é obrigatório'), email('E-mail inválido')]
@@ -86,6 +88,10 @@ function validateForm() {
       errors.value.confirmPassword = ['As senhas não coincidem']
       valid = false
     }
+    termsError.value = acceptTerms.value
+      ? ''
+      : 'É necessário aceitar os Termos e a Política de Privacidade.'
+    if (!acceptTerms.value) valid = false
   }
   return valid
 }
@@ -235,6 +241,17 @@ function forgotPassword() {
               </label>
               <a class="auth-link" @click.prevent="forgotPassword">Esqueceu a senha?</a>
             </div>
+
+            <label v-if="!isLogin" class="auth-check auth-consent">
+              <input v-model="acceptTerms" type="checkbox" :aria-invalid="!!termsError" />
+              <span>
+                Li e concordo com os
+                <RouterLink to="/termos">Termos de Uso</RouterLink>
+                e a
+                <RouterLink to="/privacidade">Política de Privacidade</RouterLink>.
+              </span>
+            </label>
+            <span v-if="!isLogin && termsError" class="form-error" role="alert">{{ termsError }}</span>
 
             <BaseButton
               variant="accent"
