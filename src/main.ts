@@ -121,7 +121,9 @@ function setupRevealAnimations() {
         }
       })
     },
-    { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+    // threshold 0 so tall sections animate as soon as they start entering,
+    // and a tiny negative margin so the element is properly inside the viewport.
+    { threshold: 0, rootMargin: '0px 0px -24px 0px' }
   )
 
   const scan = () => {

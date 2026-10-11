@@ -122,19 +122,6 @@ a:hover {
   margin-bottom: var(--bs-spacing-sm);
 }
 
-// Reveal animation
-.reveal {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s var(--bs-transition-smooth), transform 0.8s var(--bs-transition-smooth);
-  will-change: opacity, transform;
-}
-
-.reveal.reveal-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 // Focus styles
 *:focus-visible {
   outline: 2px solid var(--bs-accent-color);
