@@ -3,7 +3,6 @@ import Navbar from './Navbar.vue'
 import Footer from './Footer.vue'
 import ToastContainer from '@/components/ui/ToastContainer.vue'
 import Modal from '@/components/ui/Modal.vue'
-import DevIndicator from '@/components/ui/DevIndicator.vue'
 import { useUIStore } from '@/stores/ui'
 
 const uiStore = useUIStore()
@@ -30,8 +29,6 @@ const uiStore = useUIStore()
         @confirm="uiStore.closeModal"
       />
     </Teleport>
-
-    <DevIndicator />
   </div>
 </template>
 

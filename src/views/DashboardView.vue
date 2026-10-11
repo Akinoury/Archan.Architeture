@@ -198,14 +198,14 @@ function resetNewPost() {
             <div v-if="activeTab === 'projects'" role="tabpanel" id="tab-projects">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--bs-spacing-md); flex-wrap: wrap; gap: var(--bs-spacing-sm);">
                 <h2>Projetos ({{ projectsStore.projects.length }})</h2>
-                <BaseButton variant="accent" @click="showCreateProject = true">
+                <BaseButton variant="accent" @click="activeTab = 'create'">
                   + Novo Projeto
                 </BaseButton>
               </div>
 
               <div v-if="projectsStore.projects.length === 0" style="text-align: center; padding: var(--bs-spacing-xl); color: var(--bs-dark-gray);">
                 <p>Nenhum projeto cadastrado.</p>
-                <BaseButton variant="accent" @click="showCreateProject = true" style="margin-top: var(--bs-spacing-md);">
+                <BaseButton variant="accent" @click="activeTab = 'create'" style="margin-top: var(--bs-spacing-md);">
                   Criar Primeiro Projeto
                 </BaseButton>
               </div>
@@ -224,14 +224,14 @@ function resetNewPost() {
             <div v-if="activeTab === 'blog'" role="tabpanel" id="tab-blog">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--bs-spacing-md); flex-wrap: wrap; gap: var(--bs-spacing-sm);">
                 <h2>Artigos do Blog ({{ blogStore.posts.length }})</h2>
-                <BaseButton variant="accent" @click="showCreatePost = true">
+                <BaseButton variant="accent" @click="activeTab = 'create'">
                   + Novo Artigo
                 </BaseButton>
               </div>
 
               <div v-if="blogStore.posts.length === 0" style="text-align: center; padding: var(--bs-spacing-xl); color: var(--bs-dark-gray);">
                 <p>Nenhum artigo cadastrado.</p>
-                <BaseButton variant="accent" @click="showCreatePost = true" style="margin-top: var(--bs-spacing-md);">
+                <BaseButton variant="accent" @click="activeTab = 'create'" style="margin-top: var(--bs-spacing-md);">
                   Criar Primeiro Artigo
                 </BaseButton>
               </div>

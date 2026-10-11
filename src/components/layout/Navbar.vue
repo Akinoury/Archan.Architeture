@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -13,7 +13,8 @@ const mobileMenuOpen = ref(false)
 const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'Projetos', path: '/projetos' },
-  { name: 'Blog', path: '/blog' }
+  { name: 'Blog', path: '/blog' },
+  { name: 'Contatos', path: '/contato' }
 ]
 
 const isActive = (path: string) => {
@@ -38,6 +39,37 @@ async function handleLogout() {
 
 // Keep the menu closed when navigating
 watch(() => route.fullPath, () => closeMobileMenu())
+
+const DESKTOP_BREAKPOINT = 960
+
+function handleDocumentClick(event: MouseEvent) {
+  if (!mobileMenuOpen.value) return
+  const target = event.target as HTMLElement | null
+  // Clicks inside the navbar (toggle button, links) are handled elsewhere.
+  if (!target?.closest('.navbar')) closeMobileMenu()
+}
+
+function handleKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape') closeMobileMenu()
+}
+
+// If the viewport grows past the mobile breakpoint while the menu is open,
+// close it so the body scroll-lock doesn't get stuck.
+function handleResize() {
+  if (window.innerWidth > DESKTOP_BREAKPOINT) closeMobileMenu()
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleDocumentClick)
+  document.addEventListener('keydown', handleKeydown)
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleDocumentClick)
+  document.removeEventListener('keydown', handleKeydown)
+  window.removeEventListener('resize', handleResize)
+})
 </script>
 
 <template>

@@ -1,32 +1,31 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { watch } from 'vue'
 import { useDevModeStore } from '@/stores/devMode'
+import { useAuthStore } from '@/stores/auth'
 import { provideToast, provideModal } from '@/composables'
 import { RouterView } from 'vue-router'
 
 const devModeStore = useDevModeStore()
+const authStore = useAuthStore()
 
 // Provide global toast and modal
 provideToast()
 provideModal()
 
-// Keyboard shortcut for dev mode: Ctrl+Shift+D
-const handleKeydown = (event: KeyboardEvent) => {
-  if (event.ctrlKey && event.shiftKey && event.key === 'D') {
-    event.preventDefault()
-    devModeStore.toggle()
-  }
-}
-
-onMounted(() => {
-  // Initialize dev mode
-  devModeStore.init()
-  document.addEventListener('keydown', handleKeydown)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown)
-})
+// Developer/content-editing mode is bound to the privileged account.
+// Regular visitors can never see or reach it: there is no button and no
+// shortcut — signing in with the admin credentials is the only way in.
+watch(
+  () => authStore.user?.role ?? null,
+  (role) => {
+    if (role === 'admin') {
+      devModeStore.enable()
+    } else {
+      devModeStore.disable()
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <template>

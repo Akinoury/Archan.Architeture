@@ -77,6 +77,27 @@ function handleKeydown(event: KeyboardEvent) {
   }
 }
 
+// Touch swipe support (mobile / tablets)
+let touchStartX = 0
+let touchStartY = 0
+
+function handleTouchStart(event: TouchEvent) {
+  touchStartX = event.changedTouches[0].clientX
+  touchStartY = event.changedTouches[0].clientY
+}
+
+function handleTouchEnd(event: TouchEvent) {
+  const deltaX = event.changedTouches[0].clientX - touchStartX
+  const deltaY = event.changedTouches[0].clientY - touchStartY
+  // Ignore short or mostly-vertical gestures so page scrolling still works.
+  if (Math.abs(deltaX) < 40 || Math.abs(deltaX) < Math.abs(deltaY)) return
+  if (deltaX < 0) {
+    nextSlide()
+  } else {
+    prevSlide()
+  }
+}
+
 onMounted(() => {
   startAutoplay()
 })
@@ -99,6 +120,8 @@ watch(() => props.images, () => {
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
     @keydown="handleKeydown"
+    @touchstart.passive="handleTouchStart"
+    @touchend="handleTouchEnd"
     tabindex="0"
     role="region"
     aria-label="Galeria de imagens"

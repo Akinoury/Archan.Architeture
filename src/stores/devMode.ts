@@ -1,6 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
+/**
+ * Developer (content editing) mode.
+ *
+ * This mode is NEVER exposed to regular visitors: there is no visible button
+ * and no keyboard shortcut. It is enabled exclusively by signing in with a
+ * privileged account (see `App.vue`, which syncs it with the admin role).
+ */
 export const useDevModeStore = defineStore('devMode', () => {
   const enabled = ref(false)
   const editingId = ref<string | null>(null)
@@ -8,25 +15,31 @@ export const useDevModeStore = defineStore('devMode', () => {
 
   const isEditing = computed(() => editingId.value !== null)
 
-  function toggle() {
-    enabled.value = !enabled.value
-    document.body.classList.toggle('dev-mode', enabled.value)
+  function setEnabled(value: boolean) {
+    if (enabled.value === value) return
+    enabled.value = value
+    document.body.classList.toggle('dev-mode', value)
 
-    if (!enabled.value) {
+    if (!value) {
+      // Leave any element that was being edited in a clean state.
+      if (editingId.value) {
+        editableElements.value.get(editingId.value)?.removeAttribute('contenteditable')
+      }
       editingId.value = null
       editableElements.value.clear()
     }
-
-    // Save to localStorage
-    localStorage.setItem('archan_dev_mode', String(enabled.value))
   }
 
-  function init() {
-    const saved = localStorage.getItem('archan_dev_mode')
-    if (saved === 'true') {
-      enabled.value = true
-      document.body.classList.add('dev-mode')
-    }
+  function enable() {
+    setEnabled(true)
+  }
+
+  function disable() {
+    setEnabled(false)
+  }
+
+  function toggle() {
+    setEnabled(!enabled.value)
   }
 
   function startEditing(id: string, element: HTMLElement) {
@@ -61,8 +74,9 @@ export const useDevModeStore = defineStore('devMode', () => {
     editingId,
     editableElements,
     isEditing,
+    enable,
+    disable,
     toggle,
-    init,
     startEditing,
     stopEditing,
     registerEditable,
