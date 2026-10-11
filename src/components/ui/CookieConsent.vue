@@ -203,6 +203,21 @@ function toggleDetails() {
   justify-content: flex-end;
 }
 
+/* Ghost buttons need light colors to be readable on the dark banner */
+.cookie-actions .btn-ghost {
+  color: var(--bs-bg-color);
+  border-color: rgba(252, 249, 242, 0.5);
+}
+
+.cookie-actions .btn-ghost:after {
+  background: var(--bs-bg-color);
+}
+
+.cookie-actions .btn-ghost:hover {
+  color: var(--bs-text-color);
+  border-color: var(--bs-bg-color);
+}
+
 .cookie-fade-enter-active,
 .cookie-fade-leave-active {
   transition: transform 0.35s var(--bs-transition-smooth), opacity 0.35s var(--bs-transition-smooth);
