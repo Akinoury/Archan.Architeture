@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useProjectsStore } from '@/stores/projects'
 import { useDevModeStore } from '@/stores/devMode'
 import { useToast } from '@/composables/useToast'
+import { useModal } from '@/composables/useModal'
 import DefaultLayout from '@/components/layout/DefaultLayout.vue'
 import ImageSlider from '@/components/ui/ImageSlider.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -14,6 +15,7 @@ const router = useRouter()
 const projectsStore = useProjectsStore()
 const devModeStore = useDevModeStore()
 const { error, success } = useToast()
+const { confirmDialog } = useModal()
 
 const project = computed(() => projectsStore.getProjectById(route.params.id as string))
 const loading = ref(true)
@@ -43,9 +45,10 @@ const metaItems = computed(() => {
 
 async function handleFavorite() {
   if (!project.value) return
+  const wasFeatured = project.value.featured
   try {
     await projectsStore.toggleFeatured(project.value.id)
-    success(project.value.featured ? 'Removido dos destaques' : 'Adicionado aos destaques')
+    success(wasFeatured ? 'Removido dos destaques' : 'Adicionado aos destaques')
   } catch {
     error('Erro ao atualizar destaque')
   }
@@ -53,16 +56,29 @@ async function handleFavorite() {
 
 async function handleFeature() {
   if (!project.value) return
+  const wasHero = project.value.hero
   try {
     await projectsStore.toggleHero(project.value.id)
-    success(project.value.hero ? 'Removido do hero' : 'Definido como projeto principal')
+    success(wasHero ? 'Removido do hero' : 'Definido como projeto principal')
   } catch {
     error('Erro ao atualizar hero')
   }
 }
 
+function handleEdit() {
+  if (!project.value) return
+  router.push({ name: 'Dashboard', query: { tab: 'create', type: 'project', edit: project.value.id } })
+}
+
 async function handleDelete() {
   if (!project.value) return
+  const confirmed = await confirmDialog({
+    title: 'Excluir Projeto',
+    message: `Tem certeza que deseja excluir "${project.value.title}"? Esta ação não pode ser desfeita.`,
+    confirmText: 'Excluir',
+    type: 'danger'
+  })
+  if (!confirmed) return
   try {
     await projectsStore.deleteProject(project.value.id)
     success('Projeto excluído com sucesso')
@@ -96,7 +112,10 @@ function goBack() {
             <h1 id="project-title">{{ project.title }}</h1>
           </div>
 
-          <div v-if="devModeStore.enabled" style="display: flex; gap: var(--bs-spacing-sm);">
+          <div v-if="devModeStore.enabled" style="display: flex; gap: var(--bs-spacing-sm); flex-wrap: wrap;">
+            <BaseButton variant="ghost" size="sm" @click="handleEdit">
+              ✎ Editar
+            </BaseButton>
             <BaseButton variant="ghost" size="sm" @click="handleFavorite" :class="{ 'btn-accent': project.featured }">
               {{ project.featured ? '★ Destaque' : '☆ Destaque' }}
             </BaseButton>

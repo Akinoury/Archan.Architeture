@@ -266,39 +266,40 @@
 @media (max-width: #{$breakpoint-lg}) {
   .auth-page {
     padding: var(--bs-spacing-lg) var(--bs-spacing-md);
+    align-items: flex-start;
   }
 
   .auth-card {
     grid-template-columns: 1fr;
-    max-width: 480px;
+    max-width: 520px;
   }
 
   .auth-visual {
-    min-height: 190px;
+    min-height: 200px;
   }
 
   .auth-visual-overlay {
     justify-content: flex-end;
-    gap: 0.4rem;
+    gap: 0.5rem;
     padding: var(--bs-spacing-md);
   }
 
   .auth-visual-brand {
-    font-size: 1.9rem;
+    font-size: 2rem;
   }
 
   .auth-visual-overlay p {
     font-size: 0.85rem;
-  }
-
-  .auth-panel {
-    padding: clamp(1.75rem, 5vw, 3rem);
   }
 }
 
 @media (max-width: #{$breakpoint-md}) {
   .auth-page {
     padding: var(--bs-spacing-md) var(--bs-spacing-sm);
+  }
+
+  .auth-card {
+    max-width: 100%;
   }
 
   .auth-panel {
@@ -308,18 +309,27 @@
   .auth-panel h1 {
     font-size: 1.75rem;
   }
+
+  .auth-row {
+    gap: 0.4rem;
+  }
 }
 
 @media (max-width: #{$breakpoint-sm}) {
   .auth-page {
-    padding: var(--bs-spacing-md);
-    align-items: flex-start;
-    padding-top: calc(var(--bs-nav-height) + var(--bs-spacing-lg));
-    min-height: 100vh;
+    padding: var(--bs-spacing-md) var(--bs-spacing-sm) var(--bs-spacing-lg);
   }
 
   .auth-visual {
-    min-height: 150px;
+    min-height: 132px;
+  }
+
+  .auth-visual-overlay {
+    padding: var(--bs-spacing-md);
+  }
+
+  .auth-visual-brand {
+    font-size: 1.75rem;
   }
 
   .auth-visual-overlay p {
@@ -327,16 +337,18 @@
   }
 
   .auth-panel {
-    padding: var(--bs-spacing-lg);
+    padding: var(--bs-spacing-lg) var(--bs-spacing-md);
   }
 
   .auth-panel h1 {
-    font-size: 1.75rem;
+    font-size: 1.65rem;
+  }
+
+  .auth-subtitle {
+    margin-bottom: var(--bs-spacing-sm);
   }
 
   .form-control {
-    padding: 0.875rem 1rem;
-    padding-right: 3rem;
     font-size: 1rem; /* Prevents zoom on iOS */
   }
 }

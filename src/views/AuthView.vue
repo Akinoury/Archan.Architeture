@@ -79,7 +79,10 @@ function handleBlur(field: keyof FormData) {
 
 function validateForm() {
   let valid = true
-  valid = validateField('name', nameRules) && valid
+  // The name field only exists on the register form.
+  if (!isLogin.value) {
+    valid = validateField('name', nameRules) && valid
+  }
   valid = validateField('email', emailRules) && valid
   valid = validateField('password', passwordRules) && valid
   if (!isLogin.value) {
@@ -166,7 +169,7 @@ function forgotPassword() {
             {{ isLogin ? 'Acesse sua conta para gerenciar projetos' : 'Cadastre-se para começar' }}
           </p>
 
-          <form @submit="handleSubmit" novalidate>
+          <form @submit.prevent="handleSubmit" novalidate>
             <BaseInput
               v-if="!isLogin"
               v-model="form.name"
@@ -187,6 +190,7 @@ function forgotPassword() {
               label="E-mail"
               placeholder="seu@email.com"
               :error="errors.email?.[0]"
+              :hint="isLogin ? 'Somente e-mails já cadastrados podem entrar.' : ''"
               :disabled="submitting"
               required
               autocomplete="email"

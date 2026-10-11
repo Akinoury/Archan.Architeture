@@ -1,6 +1,21 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { Project } from '@/types'
+
+const STORAGE_KEY = 'archan_projects'
+
+function loadProjects(): Project[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (Array.isArray(parsed)) return parsed as Project[]
+    }
+  } catch {
+    // Ignore malformed storage and fall back to the demo data.
+  }
+  return demoProjects.map(p => ({ ...p }))
+}
 
 // Demo projects data matching the original design
 const demoProjects: Project[] = [
@@ -139,9 +154,22 @@ const demoProjects: Project[] = [
 ]
 
 export const useProjectsStore = defineStore('projects', () => {
-  const projects = ref<Project[]>([...demoProjects])
+  const projects = ref<Project[]>(loadProjects())
   const loading = ref(false)
   const error = ref<string | null>(null)
+
+  // Persist admin/dev changes so they survive a page reload.
+  watch(
+    projects,
+    value => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(value))
+      } catch {
+        // Storage might be unavailable/full — ignore.
+      }
+    },
+    { deep: true }
+  )
 
   const featuredProjects = computed(() => projects.value.filter(p => p.featured))
   const heroProject = computed(() => projects.value.find(p => p.hero) || projects.value[0])

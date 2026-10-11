@@ -100,7 +100,7 @@ onUnmounted(() => {
         </RouterLink>
       </li>
 
-      <li v-if="authStore.isAuthenticated">
+      <li v-if="authStore.isAdmin">
         <RouterLink
           to="/dashboard"
           class="nav-link"
@@ -133,6 +133,7 @@ onUnmounted(() => {
       </template>
       <template v-else>
         <RouterLink
+          v-if="authStore.isAdmin"
           to="/dashboard"
           class="nav-link nav-link-inline"
           :class="{ active: isActive('/dashboard') }"

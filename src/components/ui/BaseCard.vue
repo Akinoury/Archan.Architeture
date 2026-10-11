@@ -31,6 +31,7 @@ const emit = defineEmits<{
   click: [event: MouseEvent | KeyboardEvent]
   favorite: [event: MouseEvent]
   feature: [event: MouseEvent]
+  edit: [event: MouseEvent]
   delete: [event: MouseEvent]
 }>()
 
@@ -50,6 +51,11 @@ function handleFavorite(event: MouseEvent) {
 function handleFeature(event: MouseEvent) {
   event.stopPropagation()
   emit('feature', event)
+}
+
+function handleEdit(event: MouseEvent) {
+  event.stopPropagation()
+  emit('edit', event)
 }
 
 function handleDelete(event: MouseEvent) {
@@ -84,7 +90,7 @@ function handleDelete(event: MouseEvent) {
         v-if="devModeStore.enabled"
         class="card-del-btn"
         @click="handleDelete"
-        aria-label="Excluir projeto"
+        aria-label="Excluir"
         title="Excluir"
       >
         ×
@@ -108,6 +114,15 @@ function handleDelete(event: MouseEvent) {
         :title="props.hero ? 'Remover hero' : 'Definir como hero'"
       >
         ◆
+      </button>
+      <button
+        v-if="devModeStore.enabled && props.showActions"
+        class="card-edit-btn"
+        @click="handleEdit"
+        aria-label="Editar"
+        title="Editar"
+      >
+        ✎
       </button>
     </div>
 

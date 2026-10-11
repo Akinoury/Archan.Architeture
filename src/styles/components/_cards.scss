@@ -84,7 +84,8 @@
 // Card action buttons (dev mode)
 .card-del-btn,
 .card-star-btn,
-.card-hero-btn {
+.card-hero-btn,
+.card-edit-btn {
   position: absolute;
   top: 10px;
   width: 36px;
@@ -132,8 +133,16 @@
   border-color: #eee;
 }
 
+.card-edit-btn {
+  left: 94px;
+  background: var(--bs-white);
+  color: #555;
+  border-color: #eee;
+}
+
 .card-star-btn:hover,
-.card-hero-btn:hover {
+.card-hero-btn:hover,
+.card-edit-btn:hover {
   background: var(--bs-light-gray);
   transform: scale(1.1);
 }
@@ -153,7 +162,8 @@
 // Dev mode visibility
 body.dev-mode .card-del-btn,
 body.dev-mode .card-star-btn,
-body.dev-mode .card-hero-btn {
+body.dev-mode .card-hero-btn,
+body.dev-mode .card-edit-btn {
   display: flex !important;
 }
 

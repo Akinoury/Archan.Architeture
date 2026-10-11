@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, ref, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useProjectsStore } from '@/stores/projects'
 import { useBlogStore } from '@/stores/blog'
@@ -11,9 +11,9 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import ProjectCard from '@/components/ui/ProjectCard.vue'
 import BlogCard from '@/components/ui/BlogCard.vue'
-import { formatCurrency } from '@/utils/formatters'
-import { useModal } from '@/composables/useModal'
+import type { BlogPost, Project } from '@/types'
 
+const route = useRoute()
 const router = useRouter()
 
 const authStore = useAuthStore()
@@ -21,11 +21,13 @@ const projectsStore = useProjectsStore()
 const blogStore = useBlogStore()
 const devModeStore = useDevModeStore()
 const { success, error } = useToast()
-const { openModal, closeModal, confirmDialog } = useModal()
 
 const activeTab = ref<'projects' | 'blog' | 'create'>('projects')
-const showCreateProject = ref(false)
-const showCreatePost = ref(false)
+const editingProjectId = ref<string | null>(null)
+const editingPostId = ref<string | null>(null)
+
+const DEFAULT_PROJECT_IMAGE = '/assets/images/hero_exterior_1776171883335.png'
+const DEFAULT_POST_IMAGE = '/assets/images/project_render_1776171965188.png'
 
 const ariaLabelledBy = computed(() => `tab-${activeTab.value}`)
 
@@ -38,7 +40,7 @@ const newProject = ref({
   bathrooms: 0,
   garage: 0,
   floors: 1,
-  image: '/assets/images/hero_exterior_1776171883335.png',
+  image: DEFAULT_PROJECT_IMAGE,
   featured: false,
   hero: false,
   category: 'residential' as 'residential' | 'commercial' | 'interior',
@@ -49,81 +51,74 @@ const newPost = ref({
   title: '',
   excerpt: '',
   content: '',
-  image: '/assets/images/project_render_1776171965188.png',
+  image: DEFAULT_POST_IMAGE,
   tags: '',
   featured: false
 })
 
-const projectTabs = [
+const projectErrors = ref<Record<string, string>>({})
+const postErrors = ref<Record<string, string>>({})
+
+// Reactive so the sidebar counters update as content is created/removed.
+const projectTabs = computed(() => [
   { id: 'projects', label: 'Projetos', count: projectsStore.projects.length },
   { id: 'blog', label: 'Blog', count: blogStore.posts.length },
   { id: 'create', label: 'Criar', count: 0 }
-] as const
+])
 
-async function handleCreateProject() {
-  try {
-    await projectsStore.addProject({
-      ...newProject.value,
-      tags: newProject.value.tags.split(',').map(t => t.trim()).filter(Boolean)
-    })
-    success('Projeto criado com sucesso!')
-    showCreateProject.value = false
-    activeTab.value = 'projects'
-    resetNewProject()
-  } catch {
-    error('Erro ao criar projeto')
-  }
+function splitTags(value: string): string[] {
+  return value.split(',').map(t => t.trim()).filter(Boolean)
 }
 
-async function handleCreatePost() {
-  try {
-    await blogStore.addPost({
-      ...newPost.value,
-      author: authStore.user?.name || 'Archan Team',
-      publishedAt: new Date().toISOString(),
-      tags: newPost.value.tags.split(',').map(t => t.trim()).filter(Boolean)
-    })
-    success('Artigo criado com sucesso!')
-    showCreatePost.value = false
-    activeTab.value = 'blog'
-    resetNewPost()
-  } catch {
-    error('Erro ao criar artigo')
-  }
+function validateProject(): boolean {
+  const errors: Record<string, string> = {}
+  if (!newProject.value.title.trim()) errors.title = 'Informe o título do projeto.'
+  if (!newProject.value.description.trim()) errors.description = 'Informe uma descrição.'
+  if (Number(newProject.value.price) < 0) errors.price = 'Valor inválido.'
+  if (Number(newProject.value.area) < 0) errors.area = 'Área inválida.'
+  projectErrors.value = errors
+  return Object.keys(errors).length === 0
 }
 
-async function handleDeleteProject(id: string) {
-  const confirmed = await confirmDialog({
-    title: 'Excluir Projeto',
-    message: 'Tem certeza que deseja excluir este projeto? Esta ação não pode ser desfeita.',
-    confirmText: 'Excluir',
-    type: 'danger'
-  })
-  if (confirmed) {
-    try {
-      await projectsStore.deleteProject(id)
-      success('Projeto excluído')
-    } catch {
-      error('Erro ao excluir projeto')
-    }
-  }
+function validatePost(): boolean {
+  const errors: Record<string, string> = {}
+  if (!newPost.value.title.trim()) errors.title = 'Informe o título do artigo.'
+  if (!newPost.value.excerpt.trim()) errors.excerpt = 'Informe um resumo.'
+  postErrors.value = errors
+  return Object.keys(errors).length === 0
 }
 
-async function handleDeletePost(id: string) {
-  const confirmed = await confirmDialog({
-    title: 'Excluir Artigo',
-    message: 'Tem certeza que deseja excluir este artigo? Esta ação não pode ser desfeita.',
-    confirmText: 'Excluir',
-    type: 'danger'
-  })
-  if (confirmed) {
-    try {
-      await blogStore.deletePost(id)
-      success('Artigo excluído')
-    } catch {
-      error('Erro ao excluir artigo')
-    }
+function loadProject(project: Project) {
+  newProject.value = {
+    title: project.title,
+    description: project.description,
+    price: project.price,
+    area: project.area,
+    bedrooms: project.bedrooms,
+    bathrooms: project.bathrooms,
+    garage: project.garage,
+    floors: project.floors,
+    image: project.image || DEFAULT_PROJECT_IMAGE,
+    featured: project.featured,
+    hero: project.hero ?? false,
+    category: project.category,
+    tags: project.tags.join(', ')
   }
+  editingProjectId.value = project.id
+  projectErrors.value = {}
+}
+
+function loadPost(post: BlogPost) {
+  newPost.value = {
+    title: post.title,
+    excerpt: post.excerpt,
+    content: post.content,
+    image: post.image || DEFAULT_POST_IMAGE,
+    tags: post.tags.join(', '),
+    featured: post.featured
+  }
+  editingPostId.value = post.id
+  postErrors.value = {}
 }
 
 function resetNewProject() {
@@ -136,12 +131,13 @@ function resetNewProject() {
     bathrooms: 0,
     garage: 0,
     floors: 1,
-    image: '/assets/images/hero_exterior_1776171883335.png',
+    image: DEFAULT_PROJECT_IMAGE,
     featured: false,
     hero: false,
     category: 'residential',
     tags: ''
   }
+  projectErrors.value = {}
 }
 
 function resetNewPost() {
@@ -149,32 +145,154 @@ function resetNewPost() {
     title: '',
     excerpt: '',
     content: '',
-    image: '/assets/images/project_render_1776171965188.png',
+    image: DEFAULT_POST_IMAGE,
     tags: '',
     featured: false
   }
+  postErrors.value = {}
 }
+
+function clearEditQuery() {
+  if (!route.query.edit && !route.query.tab && !route.query.type) return
+  const query = { ...route.query }
+  delete query.edit
+  delete query.tab
+  delete query.type
+  router.replace({ query })
+}
+
+function exitEdit() {
+  editingProjectId.value = null
+  editingPostId.value = null
+  resetNewProject()
+  resetNewPost()
+}
+
+function cancelEdit() {
+  const wasProject = !!editingProjectId.value
+  exitEdit()
+  activeTab.value = wasProject ? 'projects' : 'blog'
+  clearEditQuery()
+}
+
+async function handleProjectSubmit() {
+  if (!validateProject()) {
+    error('Corrija os campos destacados.')
+    return
+  }
+  try {
+    const payload = {
+      ...newProject.value,
+      image: newProject.value.image.trim() || DEFAULT_PROJECT_IMAGE,
+      title: newProject.value.title.trim(),
+      description: newProject.value.description.trim(),
+      tags: splitTags(newProject.value.tags)
+    }
+    if (editingProjectId.value) {
+      await projectsStore.updateProject(editingProjectId.value, payload)
+      success('Projeto atualizado com sucesso!')
+    } else {
+      await projectsStore.addProject(payload)
+      success('Projeto criado com sucesso!')
+    }
+    exitEdit()
+    activeTab.value = 'projects'
+    clearEditQuery()
+  } catch {
+    error('Erro ao salvar projeto')
+  }
+}
+
+async function handlePostSubmit() {
+  if (!validatePost()) {
+    error('Corrija os campos destacados.')
+    return
+  }
+  try {
+    const payload = {
+      ...newPost.value,
+      image: newPost.value.image.trim() || DEFAULT_POST_IMAGE,
+      title: newPost.value.title.trim(),
+      excerpt: newPost.value.excerpt.trim(),
+      author: authStore.user?.name || 'Archan Team',
+      publishedAt: new Date().toISOString(),
+      tags: splitTags(newPost.value.tags)
+    }
+    if (editingPostId.value) {
+      await blogStore.updatePost(editingPostId.value, payload)
+      success('Artigo atualizado com sucesso!')
+    } else {
+      await blogStore.addPost(payload)
+      success('Artigo criado com sucesso!')
+    }
+    exitEdit()
+    activeTab.value = 'blog'
+    clearEditQuery()
+  } catch {
+    error('Erro ao salvar artigo')
+  }
+}
+
+// Open the editor directly from the query string (?tab=create&type=project&edit=ID).
+// Used by the "Editar" button on the public cards / dashboard cards.
+function syncFromRoute() {
+  const editId = (route.query.edit as string) || ''
+  const type = (route.query.type as string) || ''
+  const tab = (route.query.tab as string) || ''
+
+  if (!editId) {
+    if (tab === 'blog') activeTab.value = 'blog'
+    else if (tab === 'create') activeTab.value = 'create'
+    return
+  }
+
+  if (type === 'post') {
+    const post = blogStore.getPostById(editId)
+    if (post) {
+      editingProjectId.value = null
+      loadPost(post)
+      activeTab.value = 'create'
+    }
+  } else {
+    const project = projectsStore.getProjectById(editId)
+    if (project) {
+      editingPostId.value = null
+      loadProject(project)
+      activeTab.value = 'create'
+    }
+  }
+}
+
+onMounted(syncFromRoute)
+watch(() => route.fullPath, syncFromRoute)
 </script>
 
 <template>
   <DefaultLayout>
     <section class="section reveal" aria-labelledby="dashboard-title">
       <div class="container-custom">
-        <header style="margin-bottom: var(--bs-spacing-lg);">
-          <h1 id="dashboard-title">Dashboard Administrativo</h1>
-          <p style="color: var(--bs-dark-gray);">Gerencie projetos, artigos e configurações do site.</p>
+        <header class="dashboard-header">
+          <h1 id="dashboard-title">Dashboard</h1>
+          <p>Gerencie projetos, artigos e o conteúdo do site.</p>
         </header>
+
+        <div v-if="devModeStore.enabled" class="dev-banner" role="status">
+          <span class="dev-dot" aria-hidden="true"></span>
+          <div>
+            <strong>Modo Admin/Dev ativo</strong>
+            <span>Crie, edite, destaque ou exclua conteúdo. As alterações ficam salvas neste navegador.</span>
+          </div>
+        </div>
 
         <div class="dashboard-layout">
           <aside class="dashboard-sidebar" aria-label="Navegação do dashboard">
             <h3>Menu</h3>
-            <nav style="display: flex; flex-direction: column; gap: var(--bs-spacing-xs);">
+            <nav class="dashboard-nav">
               <button
                 v-for="tab in projectTabs"
                 :key="tab.id"
                 :class="['btn', 'btn-full', 'btn-ghost', 'btn-sm', { 'btn-accent': activeTab === tab.id }]"
                 @click="activeTab = tab.id as any"
-                style="text-align: left; justify-content: space-between;"
                 type="button"
               >
                 {{ tab.label }}
@@ -182,9 +300,9 @@ function resetNewPost() {
               </button>
             </nav>
 
-            <div class="dashboard-card" style="margin-top: var(--bs-spacing-lg);">
-              <h3 style="font-size: 0.85rem; margin-bottom: var(--bs-spacing-sm);">Estatísticas Rápidas</h3>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--bs-spacing-sm); font-size: 0.85rem;">
+            <div class="dashboard-card dashboard-stats">
+              <h3>Estatísticas Rápidas</h3>
+              <div class="dashboard-stats-grid">
                 <div><strong>Projetos:</strong> {{ projectsStore.projects.length }}</div>
                 <div><strong>Destaques:</strong> {{ projectsStore.featuredProjects.length }}</div>
                 <div><strong>Artigos:</strong> {{ blogStore.posts.length }}</div>
@@ -196,16 +314,16 @@ function resetNewPost() {
           <main class="dashboard-main" role="tabpanel" :aria-labelledby="ariaLabelledBy">
             <!-- Projects Tab -->
             <div v-if="activeTab === 'projects'" role="tabpanel" id="tab-projects">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--bs-spacing-md); flex-wrap: wrap; gap: var(--bs-spacing-sm);">
+              <div class="tab-head">
                 <h2>Projetos ({{ projectsStore.projects.length }})</h2>
                 <BaseButton variant="accent" @click="activeTab = 'create'">
                   + Novo Projeto
                 </BaseButton>
               </div>
 
-              <div v-if="projectsStore.projects.length === 0" style="text-align: center; padding: var(--bs-spacing-xl); color: var(--bs-dark-gray);">
+              <div v-if="projectsStore.projects.length === 0" class="tab-empty">
                 <p>Nenhum projeto cadastrado.</p>
-                <BaseButton variant="accent" @click="activeTab = 'create'" style="margin-top: var(--bs-spacing-md);">
+                <BaseButton variant="accent" @click="activeTab = 'create'">
                   Criar Primeiro Projeto
                 </BaseButton>
               </div>
@@ -222,16 +340,16 @@ function resetNewPost() {
 
             <!-- Blog Tab -->
             <div v-if="activeTab === 'blog'" role="tabpanel" id="tab-blog">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--bs-spacing-md); flex-wrap: wrap; gap: var(--bs-spacing-sm);">
+              <div class="tab-head">
                 <h2>Artigos do Blog ({{ blogStore.posts.length }})</h2>
                 <BaseButton variant="accent" @click="activeTab = 'create'">
                   + Novo Artigo
                 </BaseButton>
               </div>
 
-              <div v-if="blogStore.posts.length === 0" style="text-align: center; padding: var(--bs-spacing-xl); color: var(--bs-dark-gray);">
+              <div v-if="blogStore.posts.length === 0" class="tab-empty">
                 <p>Nenhum artigo cadastrado.</p>
-                <BaseButton variant="accent" @click="activeTab = 'create'" style="margin-top: var(--bs-spacing-md);">
+                <BaseButton variant="accent" @click="activeTab = 'create'">
                   Criar Primeiro Artigo
                 </BaseButton>
               </div>
@@ -246,17 +364,27 @@ function resetNewPost() {
               </div>
             </div>
 
-            <!-- Create Tab -->
+            <!-- Create / Edit Tab -->
             <div v-if="activeTab === 'create'" role="tabpanel" id="tab-create">
-              <div class="form-grid form-grid-2" style="gap: var(--bs-spacing-lg);">
-                <div class="card" style="padding: var(--bs-spacing-lg);">
-                  <h3 style="margin-bottom: var(--bs-spacing-md);">Novo Projeto</h3>
-                  <form @submit.prevent="handleCreateProject">
-                    <BaseInput v-model="newProject.title" label="Título" required placeholder="Título do projeto" />
-                    <BaseInput v-model="newProject.description" label="Descrição" required placeholder="Descrição curta" />
+              <div v-if="editingProjectId || editingPostId" class="edit-banner">
+                <span>
+                  Editando {{ editingProjectId ? 'projeto' : 'artigo' }}:
+                  <strong>{{ editingProjectId ? (newProject.title || 'sem título') : (newPost.title || 'sem título') }}</strong>
+                </span>
+                <BaseButton variant="ghost" size="sm" type="button" @click="cancelEdit">
+                  Cancelar edição
+                </BaseButton>
+              </div>
+
+              <div class="form-grid form-grid-2 form-grid-lg">
+                <div v-if="!editingPostId" class="card edit-card">
+                  <h3>{{ editingProjectId ? 'Editar Projeto' : 'Novo Projeto' }}</h3>
+                  <form @submit.prevent="handleProjectSubmit" novalidate>
+                    <BaseInput v-model="newProject.title" label="Título" required placeholder="Título do projeto" :error="projectErrors.title" />
+                    <BaseInput v-model="newProject.description" label="Descrição" required placeholder="Descrição curta" :error="projectErrors.description" />
                     <div class="form-grid form-grid-2">
-                      <BaseInput v-model.number="newProject.price" type="number" label="Preço (R$)" required min="0" step="1000" />
-                      <BaseInput v-model.number="newProject.area" type="number" label="Área (m²)" required min="0" step="1" />
+                      <BaseInput v-model.number="newProject.price" type="number" label="Preço (R$)" required min="0" step="1000" :error="projectErrors.price" />
+                      <BaseInput v-model.number="newProject.area" type="number" label="Área (m²)" required min="0" step="1" :error="projectErrors.area" />
                     </div>
                     <div class="form-grid form-grid-4">
                       <BaseInput v-model.number="newProject.bedrooms" type="number" label="Quartos" min="0" />
@@ -266,33 +394,45 @@ function resetNewPost() {
                     </div>
                     <BaseInput v-model="newProject.image" label="Imagem (URL)" placeholder="/assets/images/..." />
                     <BaseInput v-model="newProject.tags" label="Tags (separadas por vírgula)" placeholder="Moderno, Sustentável, Luxo" />
-                    <div class="form-grid form-grid-2" style="margin-top: var(--bs-spacing-sm);">
-                      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <div class="form-grid form-grid-2 checkbox-row">
+                      <label class="check-inline">
                         <input type="checkbox" v-model="newProject.featured" /> Destaque
                       </label>
-                      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                      <label class="check-inline">
                         <input type="checkbox" v-model="newProject.hero" /> Hero Principal
                       </label>
                     </div>
-                    <div style="margin-top: var(--bs-spacing-md);">
-                      <BaseButton variant="accent" type="submit" full-width>Criar Projeto</BaseButton>
+                    <div class="form-actions">
+                      <BaseButton variant="accent" type="submit" :loading="projectsStore.loading">
+                        {{ editingProjectId ? 'Salvar Alterações' : 'Criar Projeto' }}
+                      </BaseButton>
+                      <BaseButton v-if="editingProjectId" variant="ghost" type="button" @click="cancelEdit">
+                        Cancelar
+                      </BaseButton>
                     </div>
                   </form>
                 </div>
 
-                <div class="card" style="padding: var(--bs-spacing-lg);">
-                  <h3 style="margin-bottom: var(--bs-spacing-md);">Novo Artigo</h3>
-                  <form @submit.prevent="handleCreatePost">
-                    <BaseInput v-model="newPost.title" label="Título" required placeholder="Título do artigo" />
-                    <BaseInput v-model="newPost.excerpt" label="Resumo" required placeholder="Resumo curto para listagem" />
+                <div v-if="!editingProjectId" class="card edit-card">
+                  <h3>{{ editingPostId ? 'Editar Artigo' : 'Novo Artigo' }}</h3>
+                  <form @submit.prevent="handlePostSubmit" novalidate>
+                    <BaseInput v-model="newPost.title" label="Título" required placeholder="Título do artigo" :error="postErrors.title" />
+                    <BaseInput v-model="newPost.excerpt" label="Resumo" required placeholder="Resumo curto para listagem" :error="postErrors.excerpt" />
                     <BaseInput v-model="newPost.content" label="Conteúdo (HTML)" placeholder="<h2>Título</h2><p>Conteúdo...</p>" />
                     <BaseInput v-model="newPost.image" label="Imagem (URL)" placeholder="/assets/images/..." />
                     <BaseInput v-model="newPost.tags" label="Tags (separadas por vírgula)" placeholder="Arquitetura, Sustentabilidade, Tendências" />
-                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-top: var(--bs-spacing-sm);">
-                      <input type="checkbox" v-model="newPost.featured" /> Artigo em Destaque
-                    </label>
-                    <div style="margin-top: var(--bs-spacing-md);">
-                      <BaseButton variant="accent" type="submit" full-width>Criar Artigo</BaseButton>
+                    <div class="checkbox-row">
+                      <label class="check-inline">
+                        <input type="checkbox" v-model="newPost.featured" /> Artigo em Destaque
+                      </label>
+                    </div>
+                    <div class="form-actions">
+                      <BaseButton variant="accent" type="submit" :loading="blogStore.loading">
+                        {{ editingPostId ? 'Salvar Alterações' : 'Criar Artigo' }}
+                      </BaseButton>
+                      <BaseButton v-if="editingPostId" variant="ghost" type="button" @click="cancelEdit">
+                        Cancelar
+                      </BaseButton>
                     </div>
                   </form>
                 </div>
@@ -306,6 +446,105 @@ function resetNewPost() {
 </template>
 
 <style scoped>
+.dashboard-header {
+  margin-bottom: var(--bs-spacing-lg);
+}
+
+.dashboard-header p {
+  color: var(--bs-dark-gray);
+}
+
+.dashboard-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bs-spacing-xs);
+}
+
+.dashboard-nav .btn {
+  text-align: left;
+  justify-content: space-between;
+}
+
+.dashboard-stats {
+  margin-top: var(--bs-spacing-lg);
+}
+
+.dashboard-stats h3 {
+  font-size: 0.85rem;
+  margin-bottom: var(--bs-spacing-sm);
+}
+
+.dashboard-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--bs-spacing-sm);
+  font-size: 0.85rem;
+}
+
+.dev-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.9rem 1.1rem;
+  margin-bottom: var(--bs-spacing-lg);
+  background: rgba(181, 140, 73, 0.12);
+  border: 1px solid rgba(181, 140, 73, 0.4);
+  border-left: 4px solid var(--bs-accent-color);
+  font-size: 0.85rem;
+  color: var(--bs-text-color);
+}
+
+.dev-banner strong {
+  display: block;
+}
+
+.dev-banner span {
+  color: var(--bs-dark-gray);
+}
+
+.dev-dot {
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  margin-top: 0.35rem;
+  border-radius: 50%;
+  background: #27ae60;
+  box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.18);
+}
+
+.tab-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--bs-spacing-md);
+  flex-wrap: wrap;
+  gap: var(--bs-spacing-sm);
+}
+
+.tab-empty {
+  text-align: center;
+  padding: var(--bs-spacing-xl);
+  color: var(--bs-dark-gray);
+}
+
+.tab-empty .btn {
+  margin-top: var(--bs-spacing-md);
+}
+
+.edit-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--bs-spacing-sm);
+  padding: 0.75rem 1rem;
+  margin-bottom: var(--bs-spacing-md);
+  background: var(--bs-white);
+  border-left: 4px solid var(--bs-accent-color);
+  box-shadow: var(--bs-card-shadow);
+  font-size: 0.9rem;
+}
+
 .form-grid {
   display: grid;
   gap: var(--bs-spacing-sm);
@@ -319,22 +558,34 @@ function resetNewPost() {
   grid-template-columns: repeat(4, 1fr);
 }
 
+.edit-card {
+  padding: var(--bs-spacing-lg);
+}
+
+.edit-card h3 {
+  margin-bottom: var(--bs-spacing-md);
+}
+
+.checkbox-row {
+  margin-top: var(--bs-spacing-sm);
+}
+
+.check-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  min-height: var(--bs-touch-target-min);
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--bs-spacing-sm);
+  margin-top: var(--bs-spacing-md);
+}
+
 @media (max-width: 960px) {
-  .dashboard-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .dashboard-sidebar {
-    border-right: none;
-    border-bottom: 1px solid var(--bs-light-gray);
-    padding-right: 0;
-    padding-bottom: var(--bs-spacing-md);
-  }
-
-  .dashboard-main {
-    margin-top: var(--bs-spacing-lg);
-  }
-
   .form-grid-4 {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -346,8 +597,8 @@ function resetNewPost() {
     grid-template-columns: 1fr;
   }
 
-  .dashboard-main {
-    margin-top: var(--bs-spacing-md);
+  .form-grid-lg {
+    gap: var(--bs-spacing-md);
   }
 }
 </style>

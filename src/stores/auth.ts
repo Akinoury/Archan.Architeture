@@ -1,9 +1,47 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { User, AuthState } from '@/types'
+import type { User } from '@/types'
 
 const TOKEN_KEY = 'archan_auth_token'
 const USER_KEY = 'archan_user'
+const USERS_KEY = 'archan_users'
+
+// Internal account record: the public `User` shape plus the demo password.
+interface StoredUser extends User {
+  password: string
+}
+
+// Demo accounts. `admin@archan.com` is seeded, so it "exists" without ever
+// going through the registration flow (no verification needed). Every other
+// login must match an e-mail that was actually created.
+const seedUsers: StoredUser[] = [
+  { id: '1', name: 'Admin Archan', email: 'admin@archan.com', password: 'archan2024', role: 'admin' },
+  { id: '2', name: 'Usuário Demo', email: 'user@archan.com', password: 'user2024', role: 'user' }
+]
+
+function normalizeEmail(email: string) {
+  return email.trim().toLowerCase()
+}
+
+function loadUsers(): StoredUser[] {
+  try {
+    const raw = localStorage.getItem(USERS_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (Array.isArray(parsed)) {
+        // Always guarantee the seeded demo accounts exist (e.g. the admin can
+        // sign in without having registered).
+        const missing = seedUsers.filter(
+          seed => !parsed.some((u: StoredUser) => normalizeEmail(u.email) === seed.email)
+        )
+        return [...(parsed as StoredUser[]), ...missing]
+      }
+    }
+  } catch {
+    // Ignore malformed storage and fall back to the seeds.
+  }
+  return seedUsers.map(u => ({ ...u }))
+}
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
@@ -11,8 +49,19 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoading = ref(false)
   const initialized = ref(false)
 
+  // Registry of "existing" accounts, persisted in the browser.
+  const users = ref<StoredUser[]>(loadUsers())
+
+  if (!localStorage.getItem(USERS_KEY)) {
+    localStorage.setItem(USERS_KEY, JSON.stringify(users.value))
+  }
+
   const isAuthenticated = computed(() => !!token.value && !!user.value)
   const isAdmin = computed(() => user.value?.role === 'admin')
+
+  function persistUsers() {
+    localStorage.setItem(USERS_KEY, JSON.stringify(users.value))
+  }
 
   function setAuth(newToken: string, newUser: User) {
     token.value = newToken
@@ -48,45 +97,40 @@ export const useAuthStore = defineStore('auth', () => {
     initialized.value = true
   }
 
+  function emailExists(email: string): boolean {
+    const normalized = normalizeEmail(email)
+    return users.value.some(u => normalizeEmail(u.email) === normalized)
+  }
+
   async function login(email: string, password: string): Promise<boolean> {
     isLoading.value = true
 
     try {
       // Simulate API call - replace with actual API
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise(resolve => setTimeout(resolve, 700))
 
-      // Demo admin user
-      if (email === 'admin@archan.com' && password === 'archan2024') {
-        const adminUser: User = {
-          id: '1',
-          name: 'Admin Archan',
-          email: 'admin@archan.com',
-          role: 'admin'
-        }
-        const demoToken = 'demo-jwt-token-' + Date.now()
-        setAuth(demoToken, adminUser)
-        isLoading.value = false
-        return true
+      const normalized = normalizeEmail(email)
+      const found = users.value.find(u => normalizeEmail(u.email) === normalized)
+
+      // Only e-mails that already exist may sign in.
+      if (!found) {
+        throw new Error('E-mail não cadastrado. Crie uma conta para continuar.')
       }
 
-      // Demo regular user
-      if (email === 'user@archan.com' && password === 'user2024') {
-        const regularUser: User = {
-          id: '2',
-          name: 'Usuário Demo',
-          email: 'user@archan.com',
-          role: 'user'
-        }
-        const demoToken = 'demo-jwt-token-' + Date.now()
-        setAuth(demoToken, regularUser)
-        isLoading.value = false
-        return true
+      if (found.password !== password) {
+        throw new Error('Senha incorreta. Verifique e tente novamente.')
       }
 
-      throw new Error('Credenciais inválidas')
-    } catch (error) {
+      const authUser: User = {
+        id: found.id,
+        name: found.name,
+        email: found.email,
+        role: found.role
+      }
+      setAuth('demo-jwt-token-' + Date.now(), authUser)
+      return true
+    } finally {
       isLoading.value = false
-      throw error
     }
   }
 
@@ -95,21 +139,34 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise(resolve => setTimeout(resolve, 700))
 
-      const newUser: User = {
+      const normalized = normalizeEmail(email)
+      if (emailExists(normalized)) {
+        throw new Error('Este e-mail já está cadastrado. Faça login.')
+      }
+
+      const newUser: StoredUser = {
         id: String(Date.now()),
-        name,
-        email,
+        name: name.trim(),
+        email: normalized,
+        password,
         role: 'user'
       }
-      const demoToken = 'demo-jwt-token-' + Date.now()
-      setAuth(demoToken, newUser)
-      isLoading.value = false
+
+      users.value.push(newUser)
+      persistUsers()
+
+      const authUser: User = {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role
+      }
+      setAuth('demo-jwt-token-' + Date.now(), authUser)
       return true
-    } catch (error) {
+    } finally {
       isLoading.value = false
-      throw error
     }
   }
 
@@ -129,11 +186,13 @@ export const useAuthStore = defineStore('auth', () => {
     token,
     isLoading,
     initialized,
+    users,
     isAuthenticated,
     isAdmin,
     setAuth,
     clearAuth,
     init,
+    emailExists,
     login,
     register,
     logout,

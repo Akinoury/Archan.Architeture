@@ -1,6 +1,21 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { BlogPost } from '@/types'
+
+const STORAGE_KEY = 'archan_posts'
+
+function loadPosts(): BlogPost[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (Array.isArray(parsed)) return parsed as BlogPost[]
+    }
+  } catch {
+    // Ignore malformed storage and fall back to the demo data.
+  }
+  return demoPosts.map(p => ({ ...p }))
+}
 
 const demoPosts: BlogPost[] = [
   {
@@ -108,9 +123,22 @@ const demoPosts: BlogPost[] = [
 ]
 
 export const useBlogStore = defineStore('blog', () => {
-  const posts = ref<BlogPost[]>([...demoPosts])
+  const posts = ref<BlogPost[]>(loadPosts())
   const loading = ref(false)
   const error = ref<string | null>(null)
+
+  // Persist admin/dev changes so they survive a page reload.
+  watch(
+    posts,
+    value => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(value))
+      } catch {
+        // Storage might be unavailable/full — ignore.
+      }
+    },
+    { deep: true }
+  )
 
   const featuredPosts = computed(() => posts.value.filter(p => p.featured))
   const recentPosts = computed(() => [...posts.value].sort((a, b) => 

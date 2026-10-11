@@ -5,6 +5,7 @@ import BaseCard from './BaseCard.vue'
 import { useProjectsStore } from '@/stores/projects'
 import { useDevModeStore } from '@/stores/devMode'
 import { useToast } from '@/composables/useToast'
+import { useModal } from '@/composables/useModal'
 
 const router = useRouter()
 
@@ -30,6 +31,7 @@ const props = defineProps<{
 const projectsStore = useProjectsStore()
 const devModeStore = useDevModeStore()
 const { success, error } = useToast()
+const { confirmDialog } = useModal()
 
 const meta = computed(() => {
   const parts = []
@@ -42,9 +44,11 @@ const meta = computed(() => {
 
 async function handleFavorite(event: MouseEvent) {
   event.stopPropagation()
+  // Read the state *before* toggling so the message is always accurate.
+  const wasFeatured = props.project.featured
   try {
     await projectsStore.toggleFeatured(props.project.id)
-    success(props.project.featured ? 'Removido dos destaques' : 'Adicionado aos destaques')
+    success(wasFeatured ? 'Removido dos destaques' : 'Adicionado aos destaques')
   } catch {
     error('Erro ao atualizar destaque')
   }
@@ -52,16 +56,29 @@ async function handleFavorite(event: MouseEvent) {
 
 async function handleFeature(event: MouseEvent) {
   event.stopPropagation()
+  const wasHero = props.project.hero
   try {
     await projectsStore.toggleHero(props.project.id)
-    success(props.project.hero ? 'Removido do hero' : 'Definido como projeto principal')
+    success(wasHero ? 'Removido do hero' : 'Definido como projeto principal')
   } catch {
     error('Erro ao atualizar hero')
   }
 }
 
+async function handleEdit(event: MouseEvent) {
+  event.stopPropagation()
+  router.push({ name: 'Dashboard', query: { tab: 'create', type: 'project', edit: props.project.id } })
+}
+
 async function handleDelete(event: MouseEvent) {
   event.stopPropagation()
+  const confirmed = await confirmDialog({
+    title: 'Excluir Projeto',
+    message: `Tem certeza que deseja excluir "${props.project.title}"? Esta ação não pode ser desfeita.`,
+    confirmText: 'Excluir',
+    type: 'danger'
+  })
+  if (!confirmed) return
   try {
     await projectsStore.deleteProject(props.project.id)
     success('Projeto excluído com sucesso')
@@ -89,6 +106,7 @@ function navigateToDetail() {
     @click="navigateToDetail"
     @favorite="handleFavorite"
     @feature="handleFeature"
+    @edit="handleEdit"
     @delete="handleDelete"
   />
 </template>

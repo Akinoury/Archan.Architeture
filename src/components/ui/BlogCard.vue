@@ -3,6 +3,7 @@ import BaseCard from './BaseCard.vue'
 import { useBlogStore } from '@/stores/blog'
 import { useDevModeStore } from '@/stores/devMode'
 import { useToast } from '@/composables/useToast'
+import { useModal } from '@/composables/useModal'
 import { formatDate } from '@/utils/formatters'
 import { useRouter } from 'vue-router'
 
@@ -22,6 +23,7 @@ const props = defineProps<{
 const blogStore = useBlogStore()
 const devModeStore = useDevModeStore()
 const { success, error } = useToast()
+const { confirmDialog } = useModal()
 const router = useRouter()
 
 function navigateToPost() {
@@ -30,16 +32,29 @@ function navigateToPost() {
 
 async function handleFavorite(event: MouseEvent) {
   event.stopPropagation()
+  const wasFeatured = props.post.featured
   try {
     await blogStore.toggleFeatured(props.post.id)
-    success(props.post.featured ? 'Removido dos destaques' : 'Adicionado aos destaques')
+    success(wasFeatured ? 'Removido dos destaques' : 'Adicionado aos destaques')
   } catch {
     error('Erro ao atualizar destaque')
   }
 }
 
+async function handleEdit(event: MouseEvent) {
+  event.stopPropagation()
+  router.push({ name: 'Dashboard', query: { tab: 'create', type: 'post', edit: props.post.id } })
+}
+
 async function handleDelete(event: MouseEvent) {
   event.stopPropagation()
+  const confirmed = await confirmDialog({
+    title: 'Excluir Artigo',
+    message: `Tem certeza que deseja excluir "${props.post.title}"? Esta ação não pode ser desfeita.`,
+    confirmText: 'Excluir',
+    type: 'danger'
+  })
+  if (!confirmed) return
   try {
     await blogStore.deletePost(props.post.id)
     success('Post excluído com sucesso')
@@ -60,6 +75,7 @@ async function handleDelete(event: MouseEvent) {
     :show-actions="devModeStore.enabled"
     @click="navigateToPost"
     @favorite="handleFavorite"
+    @edit="handleEdit"
     @delete="handleDelete"
   />
 </template>
