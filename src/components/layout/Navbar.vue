@@ -318,6 +318,28 @@ onUnmounted(() => {
   display: flex;
 }
 
+/* Desktop: keep the brand pinned left, the links centered in the viewport,
+   and the actions pinned right (3-column grid keeps the middle truly centered
+   regardless of the widths on each side). */
+@media (min-width: 961px) {
+  .navbar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+  }
+
+  .nav-brand {
+    justify-self: start;
+  }
+
+  .nav-links {
+    justify-self: center;
+  }
+
+  .nav-actions.desktop-only {
+    justify-self: end;
+  }
+}
+
 @media (max-width: 960px) {
   .nav-toggle {
     display: flex;
