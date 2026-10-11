@@ -42,13 +42,6 @@ watch(() => route.fullPath, () => closeMobileMenu())
 
 const DESKTOP_BREAKPOINT = 960
 
-function handleDocumentClick(event: MouseEvent) {
-  if (!mobileMenuOpen.value) return
-  const target = event.target as HTMLElement | null
-  // Clicks inside the navbar (toggle button, links) are handled elsewhere.
-  if (!target?.closest('.navbar')) closeMobileMenu()
-}
-
 function handleKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape') closeMobileMenu()
 }
@@ -60,13 +53,11 @@ function handleResize() {
 }
 
 onMounted(() => {
-  document.addEventListener('click', handleDocumentClick)
   document.addEventListener('keydown', handleKeydown)
   window.addEventListener('resize', handleResize)
 })
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleDocumentClick)
   document.removeEventListener('keydown', handleKeydown)
   window.removeEventListener('resize', handleResize)
 })
@@ -90,6 +81,13 @@ onUnmounted(() => {
       <span></span>
       <span></span>
     </button>
+
+    <div
+      v-if="mobileMenuOpen"
+      class="nav-backdrop"
+      aria-hidden="true"
+      @click="closeMobileMenu"
+    ></div>
 
     <ul id="mobile-menu" class="nav-links" :class="{ open: mobileMenuOpen }">
       <li v-for="link in navLinks" :key="link.name">
@@ -300,6 +298,22 @@ onUnmounted(() => {
   display: none;
 }
 
+/* Invisible click-catcher shown behind the open mobile menu so taps outside
+   only dismiss the menu (they never reach the page underneath).
+   Sized explicitly because the navbar's backdrop-filter makes it the
+   containing block for fixed descendants. */
+.nav-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 998;
+  background: transparent;
+}
+
 .desktop-only {
   display: flex;
 }
@@ -307,6 +321,10 @@ onUnmounted(() => {
 @media (max-width: 960px) {
   .nav-toggle {
     display: flex;
+  }
+
+  .nav-backdrop {
+    display: block;
   }
 
   .desktop-only {
@@ -333,6 +351,7 @@ onUnmounted(() => {
     padding-bottom: calc(var(--bs-spacing-xl) + env(safe-area-inset-bottom));
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    z-index: 999;
   }
 
   .nav-links.open {
