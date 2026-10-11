@@ -1,4 +1,4 @@
-name = "archan-architecture"
+name = "archan-architeture"
 compatibility_date = "2026-10-11"
 
 [assets]
@@ -7,3 +7,14 @@ not_found_handling = "single-page-application"
 
 [vars]
 NODE_ENV = "production"
+
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+invocation_logs = true
+persist = true
+
+[observability.traces]
+enabled = false
+head_sampling_rate = 1
+persist = true
