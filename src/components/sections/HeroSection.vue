@@ -20,7 +20,7 @@ const heroImage = computed(() => projectsStore.heroProject?.image)
 
     <div class="hero-content reveal">
       <span class="kicker">Arquitetura &amp; Design</span>
-      <h1 id="hero-title">Archan Arquitetura</h1>
+      <h1 id="hero-title" class="hero-title">Archan Arquitetura</h1>
       <p>
         Estúdio de arquitetura moderna focado em projetos funcionais,
         estéticos e orientados ao investimento imobiliário.
@@ -37,3 +37,19 @@ const heroImage = computed(() => projectsStore.heroProject?.image)
     </div>
   </section>
 </template>
+
+<style scoped>
+.hero-title {
+  font-family: var(--bs-font-special);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: clamp(2rem, 9vw, 2.75rem);
+  }
+}
+</style>
