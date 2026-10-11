@@ -236,7 +236,7 @@ function resetNewPost() {
                 </BaseButton>
               </div>
 
-              <div v-else style="display: flex; flex-direction: column; gap: var(--bs-spacing-md);" role="list" aria-label="Lista de artigos para gerenciamento">
+              <div v-else class="blog-grid" role="list" aria-label="Lista de artigos para gerenciamento">
                 <BlogCard
                   v-for="post in blogStore.posts"
                   :key="post.id"

@@ -16,7 +16,7 @@ const privacyEmail = 'privacidade@archanarquitetura.com'
           <span class="section-label">Legal</span>
           <h1 id="cookies-title">Política de Cookies</h1>
           <p>
-            Esta política explica como o site da <strong>Archan Arquitetura</strong>
+            Esta política explica como o site da <strong>Archan Architecture</strong>
             utiliza cookies e tecnologias de armazenamento local, em conformidade com
             a <strong>LGPD (Lei nº 13.709/2018)</strong>.
           </p>

@@ -14,7 +14,7 @@ const contactEmail = 'contato@archanarquitetura.com'
           <h1 id="terms-title">Termos de Uso</h1>
           <p>
             Estes termos definem as regras para acesso e uso do site do estúdio
-            <strong>Archan Arquitetura</strong>. Ao navegar ou utilizar o site, você
+            <strong>Archan Architecture</strong>. Ao navegar ou utilizar o site, você
             concorda com as condições abaixo.
           </p>
           <p class="legal-updated">Última atualização: {{ lastUpdated }}</p>
@@ -42,7 +42,7 @@ const contactEmail = 'contato@archanarquitetura.com'
           <p>
             Todo o conteúdo deste site — incluindo textos, imagens, projetos, marcas,
             logotipos, ilustrações e o próprio layout — é de titularidade da
-            Archan Arquitetura ou de terceiros que autorizaram o seu uso, sendo
+            Archan Architecture ou de terceiros que autorizaram o seu uso, sendo
             protegido pela legislação de propriedade intelectual (Lei nº 9.610/1998 e
             demais normas aplicáveis).
           </p>

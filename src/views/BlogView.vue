@@ -102,7 +102,7 @@ useIntersectionObserver({ target: ctaSectionRef, once: true })
         </p>
 
         <!-- Posts List -->
-        <div style="display: flex; flex-direction: column; gap: var(--bs-spacing-md);" role="list" aria-label="Lista de artigos" v-if="filteredPosts.length > 0">
+        <div class="blog-grid" role="list" aria-label="Lista de artigos" v-if="filteredPosts.length > 0">
           <BlogCard
             v-for="post in filteredPosts"
             :key="post.id"

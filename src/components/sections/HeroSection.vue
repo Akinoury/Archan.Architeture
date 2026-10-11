@@ -21,7 +21,7 @@ const heroImage = computed(() => projectsStore.heroProject?.image)
 
     <div class="hero-content reveal">
       <span class="kicker">Arquitetura &amp; Design</span>
-      <h1 id="hero-title" class="hero-title">Archan Arquitetura</h1>
+      <h1 id="hero-title" class="hero-title">Archan Architecture</h1>
       <p class="hero-tagline">
         Estúdio de arquitetura moderna focado em projetos funcionais,
         estéticos e orientados ao investimento imobiliário.

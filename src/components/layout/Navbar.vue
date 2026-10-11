@@ -65,7 +65,7 @@ onUnmounted(() => {
 
 <template>
   <nav class="navbar" role="navigation" aria-label="Navegação principal">
-    <RouterLink to="/" class="nav-brand" aria-label="Archan Arquiteture - Início">
+    <RouterLink to="/" class="nav-brand" aria-label="Archan Architecture - Início">
       Archan
     </RouterLink>
 

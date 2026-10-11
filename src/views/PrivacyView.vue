@@ -14,7 +14,7 @@ const contactEmail = 'contato@archanarquitetura.com'
           <span class="section-label">Legal</span>
           <h1 id="privacy-title">Política de Privacidade</h1>
           <p>
-            Esta política explica como o estúdio <strong>Archan Arquitetura</strong>
+            Esta política explica como o estúdio <strong>Archan Architecture</strong>
             trata os seus dados pessoais, em conformidade com a
             <strong>Lei Geral de Proteção de Dados Pessoais (LGPD — Lei nº 13.709/2018)</strong>.
           </p>
@@ -43,7 +43,7 @@ const contactEmail = 'contato@archanarquitetura.com'
           <h2 id="introducao">1. Introdução e controlador</h2>
           <p>
             O controlador dos dados pessoais tratados neste site é o estúdio
-            <strong>Archan Arquitetura</strong>, responsável pelas decisões sobre o
+            <strong>Archan Architecture</strong>, responsável pelas decisões sobre o
             tratamento de dados pessoais. Esta política se aplica a todas as
             interações realizadas por meio deste site, como o envio de mensagens,
             a criação de conta e a navegação.
@@ -180,7 +180,7 @@ const contactEmail = 'contato@archanarquitetura.com'
           <h2 id="encarregado">11. Encarregado (DPO)</h2>
           <div class="legal-contact-box">
             <p><strong>Encarregado pelo Tratamento de Dados Pessoais (DPO)</strong></p>
-            <p>Archan Arquitetura</p>
+            <p>Archan Architecture</p>
             <p>E-mail: <a :href="`mailto:${privacyEmail}`">{{ privacyEmail }}</a></p>
             <p>E-mail geral: <a :href="`mailto:${contactEmail}`">{{ contactEmail }}</a></p>
           </div>

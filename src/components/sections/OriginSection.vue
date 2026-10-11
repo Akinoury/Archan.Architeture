@@ -9,7 +9,7 @@
         <span class="section-label">Nossa História</span>
         <h2 id="origin-title">Como tudo começou</h2>
         <p>
-          A Archan Arquitetura nasceu de uma inquietação simples: por que tantos
+          A Archan Architecture nasceu de uma inquietação simples: por que tantos
           espaços são projetados sem levar em conta quem realmente os vive?
           Fundamos o estúdio para mudar isso, colocando as pessoas, a luz e o
           cotidiano no centro de cada decisão.

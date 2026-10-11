@@ -36,7 +36,7 @@ const values = [
       <div class="container-custom">
         <header class="section-header">
           <span class="section-label">Sobre Nós</span>
-          <h1 id="about-title">Archan Arquitetura</h1>
+          <h1 id="about-title">Archan Architecture</h1>
           <p>
             Estúdio de arquitetura moderna focado em projetos funcionais,
             estéticos e orientados ao investimento imobiliário.
@@ -47,7 +47,7 @@ const values = [
           <div class="about-text">
             <h2>Design que valoriza o seu espaço</h2>
             <p>
-              A Archan Arquitetura nasceu da vontade de unir beleza e propósito.
+              A Archan Architecture nasceu da vontade de unir beleza e propósito.
               Acreditamos que um bom projeto vai muito além da estética: ele
               melhora a forma como as pessoas vivem, trabalham e se relacionam
               com a cidade.
@@ -66,7 +66,7 @@ const values = [
           <div class="about-image">
             <img
               src="/assets/images/interior_shot_1776171949307.png"
-              alt="Interior contemporâneo projetado pela Archan Arquitetura"
+              alt="Interior contemporâneo projetado pela Archan Architecture"
               loading="lazy"
             />
           </div>
@@ -81,7 +81,7 @@ const values = [
           <h2 id="values-title">O que nos guia</h2>
         </header>
 
-        <div class="grid-3" role="list" aria-label="Valores da Archan Arquitetura">
+        <div class="grid-3" role="list" aria-label="Valores da Archan Architecture">
           <article
             v-for="value in values"
             :key="value.title"

@@ -56,6 +56,22 @@
   color: var(--bs-dark-gray);
 }
 
+// Responsive grid for blog cards (listing page & dashboard).
+// Keeps cards compact: ~3 columns on desktop, 2 on tablet, 1 on mobile.
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--bs-spacing-md);
+  align-items: start;
+}
+
+@media (max-width: #{$breakpoint-sm}) {
+  .blog-grid {
+    grid-template-columns: 1fr;
+    gap: var(--bs-spacing-sm);
+  }
+}
+
 .blog-img-wrapper {
   position: relative;
   display: block;

@@ -69,7 +69,7 @@ const footerLinks = {
       </div>
 
       <div class="footer-bottom">
-        <p>&copy; {{ currentYear }} Archan Arquiteture. Todos os direitos reservados.</p>
+        <p>&copy; {{ currentYear }} Archan Architecture. Todos os direitos reservados.</p>
         <p>Feito com dedicação para transformar espaços.</p>
       </div>
     </div>
