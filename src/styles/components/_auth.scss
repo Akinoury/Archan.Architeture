@@ -2,6 +2,7 @@
 
 .auth-page {
   min-height: calc(100vh - var(--bs-nav-height));
+  min-height: calc(100dvh - var(--bs-nav-height));
   display: flex;
   align-items: center;
   justify-content: center;

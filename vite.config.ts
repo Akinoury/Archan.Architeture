@@ -7,7 +7,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/Archan.Architeture/',
+  // Served at the root of the Cloudflare Worker (archan-architeture.akyy.workers.dev)
+  base: '/',
   plugins: [vue()],
   resolve: {
     alias: {

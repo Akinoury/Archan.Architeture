@@ -2,6 +2,7 @@
 
 .hero {
   min-height: calc(100vh - var(--bs-nav-height));
+  min-height: calc(100dvh - var(--bs-nav-height));
   display: flex;
   flex-direction: column;
   justify-content: center;

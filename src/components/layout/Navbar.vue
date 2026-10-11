@@ -282,8 +282,9 @@ async function handleLogout() {
     position: fixed;
     top: 0;
     right: 0;
-    width: 300px;
+    width: min(320px, 85vw);
     height: 100vh;
+    height: 100dvh;
     background: var(--bs-bg-color);
     flex-direction: column;
     justify-content: center;
@@ -293,8 +294,10 @@ async function handleLogout() {
     transition: transform var(--bs-transition-smooth);
     border-left: 1px solid var(--bs-light-gray);
     box-shadow: -10px 0 40px rgba(0, 0, 0, 0.1);
-    padding: var(--bs-spacing-xl) var(--bs-spacing-lg);
+    padding: var(--bs-spacing-xl) var(--bs-spacing-md);
+    padding-bottom: calc(var(--bs-spacing-xl) + env(safe-area-inset-bottom));
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .nav-links.open {
@@ -323,6 +326,23 @@ async function handleLogout() {
 
   body.nav-open {
     overflow: hidden;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding-left: var(--bs-spacing-sm);
+    padding-right: var(--bs-spacing-sm);
+  }
+
+  .nav-links {
+    gap: var(--bs-spacing-md);
+    padding-left: var(--bs-spacing-sm);
+    padding-right: var(--bs-spacing-sm);
+  }
+
+  .nav-links a {
+    font-size: 1.125rem;
   }
 }
 </style>

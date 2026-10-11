@@ -156,7 +156,7 @@ function goBack() {
                 Valor referente ao projeto arquitetônico completo. 
                 Não inclui custos de construção, licenças e aprovações.
               </p>
-              <BaseButton variant="accent" full-width @click="router.push({ name: 'Auth', query: { redirect: route.fullPath } })">
+              <BaseButton variant="accent" full-width @click="router.push({ name: 'Login', query: { redirect: route.fullPath } })">
                 Solicitar Orçamento
               </BaseButton>
             </div>

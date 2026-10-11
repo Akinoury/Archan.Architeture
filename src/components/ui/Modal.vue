@@ -118,7 +118,9 @@ function handleOverlayClick(event: MouseEvent) {
   border-radius: 0;
   width: 100%;
   max-height: 90vh;
+  max-height: 90dvh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
   animation: slideUp 0.3s var(--bs-transition-smooth);
 }
@@ -201,5 +203,44 @@ function handleOverlayClick(event: MouseEvent) {
 .modal-enter-from .modal-content,
 .modal-leave-to .modal-content {
   transform: translateY(20px);
+}
+
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: var(--bs-spacing-sm);
+    padding-bottom: calc(var(--bs-spacing-sm) + env(safe-area-inset-bottom));
+  }
+
+  .modal-header {
+    padding: var(--bs-spacing-md);
+  }
+
+  .modal-body {
+    padding: var(--bs-spacing-md);
+  }
+
+  .modal-footer {
+    padding: var(--bs-spacing-md);
+    flex-direction: column-reverse;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .modal-content {
+    max-height: 95dvh;
+  }
+
+  .modal-title {
+    font-size: 1.125rem;
+  }
 }
 </style>

@@ -86,11 +86,12 @@ body.dev-mode [contenteditable="true"]:focus {
   position: fixed;
   top: calc(var(--bs-nav-height) + 1rem);
   right: 1rem;
+  left: auto;
   z-index: 1100;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  max-width: 100%;
+  max-width: calc(100vw - 2rem);
 }
 
 .toast {
@@ -271,6 +272,15 @@ body.dev-mode [contenteditable="true"]:focus {
 @media (max-width: #{$breakpoint-md}) {
   .container-custom {
     padding: 0 var(--bs-spacing-md);
+  }
+}
+
+@media (max-width: #{$breakpoint-sm}) {
+  .toast-container {
+    top: calc(var(--bs-nav-height) + 0.5rem);
+    left: var(--bs-spacing-sm);
+    right: var(--bs-spacing-sm);
+    max-width: none;
   }
 }
 

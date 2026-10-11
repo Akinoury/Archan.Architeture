@@ -72,6 +72,13 @@ const router = createRouter({
 
 // Navigation guards
 router.beforeEach(async (to, from, next) => {
+  // Legacy GitHub Pages path (e.g. /Archan.Architeture/projetos) -> root-based path.
+  // The app is now served from the domain root by the Cloudflare Worker.
+  if (to.path === '/Archan.Architeture' || to.path.startsWith('/Archan.Architeture/')) {
+    next({ path: to.fullPath.replace(/^\/Archan\.Architeture/, '') || '/', replace: true })
+    return
+  }
+
   const authStore = useAuthStore()
 
   // Initialize auth if not already done

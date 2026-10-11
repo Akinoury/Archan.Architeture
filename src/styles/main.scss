@@ -15,6 +15,10 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* `clip` (not `hidden`) prevents horizontal overflow without breaking position: sticky */
+  overflow-x: clip;
 }
 
 body {
@@ -22,8 +26,18 @@ body {
   background-color: var(--bs-bg-color);
   color: var(--bs-text-color);
   line-height: 1.7;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: clip;
+  overflow-wrap: break-word;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
 }
 
 h1, h2, h3, h4, h5, h6 {

@@ -110,4 +110,13 @@ const toastClasses = computed(() => (toast: any) => [
     transform: translateX(0);
   }
 }
+
+@media (max-width: 480px) {
+  .toast {
+    min-width: 0;
+    width: 100%;
+    max-width: none;
+    padding: 0.875rem 1rem;
+  }
+}
 </style>

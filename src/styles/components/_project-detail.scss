@@ -40,6 +40,7 @@
   position: relative;
   width: 100%;
   height: 65vh;
+  height: 65dvh;
   overflow: hidden;
   background: var(--bs-light-gray);
   min-height: 500px;
@@ -154,6 +155,7 @@
 
   .slider-container {
     height: 50vh;
+    height: 50dvh;
     min-height: 400px;
   }
 }
@@ -175,6 +177,7 @@
   
   .slider-container {
     height: 45vh;
+    height: 45dvh;
     min-height: 350px;
   }
   
@@ -206,6 +209,7 @@
   
   .slider-container {
     height: 40vh;
+    height: 40dvh;
     min-height: 300px;
   }
   

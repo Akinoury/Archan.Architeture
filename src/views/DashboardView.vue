@@ -248,17 +248,17 @@ function resetNewPost() {
 
             <!-- Create Tab -->
             <div v-if="activeTab === 'create'" role="tabpanel" id="tab-create">
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--bs-spacing-lg);">
+              <div class="form-grid form-grid-2" style="gap: var(--bs-spacing-lg);">
                 <div class="card" style="padding: var(--bs-spacing-lg);">
                   <h3 style="margin-bottom: var(--bs-spacing-md);">Novo Projeto</h3>
                   <form @submit.prevent="handleCreateProject">
                     <BaseInput v-model="newProject.title" label="Título" required placeholder="Título do projeto" />
                     <BaseInput v-model="newProject.description" label="Descrição" required placeholder="Descrição curta" />
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--bs-spacing-sm);">
+                    <div class="form-grid form-grid-2">
                       <BaseInput v-model.number="newProject.price" type="number" label="Preço (R$)" required min="0" step="1000" />
                       <BaseInput v-model.number="newProject.area" type="number" label="Área (m²)" required min="0" step="1" />
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--bs-spacing-sm);">
+                    <div class="form-grid form-grid-4">
                       <BaseInput v-model.number="newProject.bedrooms" type="number" label="Quartos" min="0" />
                       <BaseInput v-model.number="newProject.bathrooms" type="number" label="Banheiros" min="0" />
                       <BaseInput v-model.number="newProject.garage" type="number" label="Vagas" min="0" />
@@ -266,7 +266,7 @@ function resetNewPost() {
                     </div>
                     <BaseInput v-model="newProject.image" label="Imagem (URL)" placeholder="/assets/images/..." />
                     <BaseInput v-model="newProject.tags" label="Tags (separadas por vírgula)" placeholder="Moderno, Sustentável, Luxo" />
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--bs-spacing-sm); margin-top: var(--bs-spacing-sm);">
+                    <div class="form-grid form-grid-2" style="margin-top: var(--bs-spacing-sm);">
                       <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
                         <input type="checkbox" v-model="newProject.featured" /> Destaque
                       </label>
@@ -306,6 +306,19 @@ function resetNewPost() {
 </template>
 
 <style scoped>
+.form-grid {
+  display: grid;
+  gap: var(--bs-spacing-sm);
+}
+
+.form-grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.form-grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
 @media (max-width: 960px) {
   .dashboard-layout {
     grid-template-columns: 1fr;
@@ -321,11 +334,20 @@ function resetNewPost() {
   .dashboard-main {
     margin-top: var(--bs-spacing-lg);
   }
+
+  .form-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
-  .dashboard-main > div:last-child > div {
+  .form-grid-2,
+  .form-grid-4 {
     grid-template-columns: 1fr;
+  }
+
+  .dashboard-main {
+    margin-top: var(--bs-spacing-md);
   }
 }
 </style>

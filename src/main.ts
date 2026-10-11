@@ -41,11 +41,74 @@ router.onError((err) => {
   handleError(err, null, 'router')
 })
 
+/**
+ * Reveal-on-scroll animations.
+ * Elements using the `.reveal` class start hidden (opacity: 0) and are made
+ * visible once they enter the viewport. A safety net guarantees content is
+ * never left invisible if the observer fails or is unsupported.
+ */
+function setupRevealAnimations() {
+  const revealAll = () => {
+    document.querySelectorAll('.reveal:not(.reveal-visible)').forEach((el) => {
+      el.classList.add('reveal-visible')
+    })
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    revealAll()
+    return
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal-visible')
+          observer.unobserve(entry.target)
+        }
+      })
+    },
+    { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+  )
+
+  const scan = () => {
+    document.querySelectorAll('.reveal:not(.reveal-visible)').forEach((el) => {
+      observer.observe(el)
+    })
+  }
+
+  scan()
+
+  // Re-scan for dynamically rendered content (route changes, async data).
+  let pending = false
+  const mutationObserver = new MutationObserver(() => {
+    if (pending) return
+    pending = true
+    window.requestAnimationFrame(() => {
+      pending = false
+      scan()
+    })
+  })
+  mutationObserver.observe(document.getElementById('app') || document.body, {
+    childList: true,
+    subtree: true,
+  })
+
+  // Safety net: if nothing revealed shortly after load, show everything.
+  window.setTimeout(() => {
+    if (!document.querySelector('.reveal.reveal-visible')) {
+      revealAll()
+    }
+  }, 1500)
+}
+
 try {
   app.mount('#app')
   // Hide loading fallback on successful mount
   const fallback = document.getElementById('loading-fallback')
   if (fallback) fallback.style.display = 'none'
+
+  setupRevealAnimations()
 } catch (err) {
   handleError(err, null, 'mount')
 }
