@@ -53,7 +53,7 @@
   text-transform: uppercase;
   letter-spacing: 0.35em;
   color: var(--bs-accent-color);
-  margin-bottom: var(--bs-spacing-sm);
+  margin-bottom: 0.75rem;
 }
 
 .hero-content .kicker::before,
@@ -72,7 +72,7 @@
   line-height: 1.02;
   letter-spacing: 0.01em;
   color: var(--bs-bg-color);
-  margin-bottom: var(--bs-spacing-md);
+  margin-bottom: 1.25rem;
   text-shadow: 0 4px 40px rgba(0, 0, 0, 0.35);
 }
 
@@ -81,7 +81,7 @@
   font-weight: 300;
   line-height: 1.7;
   max-width: 660px;
-  margin: 0 auto var(--bs-spacing-lg);
+  margin: 0 auto 2.25rem;
   color: rgba(252, 249, 242, 0.88);
 }
 
