@@ -9,9 +9,57 @@ import './styles/main.scss'
 // Bootstrap JS (for dropdowns, modals, tooltips, etc.)
 import 'bootstrap'
 
+/**
+ * Auto-recovery for stale chunk errors.
+ *
+ * When a new deploy replaces the hashed asset files, a browser that still has
+ * the previous entry script (or navigates right during a deploy) may try to
+ * fetch a chunk that no longer exists. The SPA fallback then answers with
+ * index.html, producing the "Failed to fetch dynamically imported module" /
+ * MIME type error. Reloading once fetches the fresh index.html + entry.
+ *
+ * A short guard prevents infinite reload loops.
+ */
+const RELOAD_KEY = 'archan:chunk-reload-at'
+
+function reloadOnceForFreshAssets(): boolean {
+  let last = 0
+  try {
+    last = Number(sessionStorage.getItem(RELOAD_KEY) || '0')
+  } catch {
+    last = 0
+  }
+  const now = Date.now()
+  // Only auto-reload if we have not done it within the last 10 seconds.
+  if (now - last < 10000) return false
+  try {
+    sessionStorage.setItem(RELOAD_KEY, String(now))
+  } catch {
+    /* ignore private-mode storage errors */
+  }
+  window.location.reload()
+  return true
+}
+
+const isChunkLoadError = (message: string): boolean =>
+  /Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed|Expected a JavaScript-or-Wasm module script/i.test(
+    message
+  )
+
+// Vite emits this when a dynamic import fails.
+window.addEventListener('vite:preloadError', (event) => {
+  event.preventDefault()
+  reloadOnceForFreshAssets()
+})
+
 // Global error handler
 const handleError = (err: unknown, instance: any, info: string) => {
   console.error('Vue Error:', err, info)
+  const message = err instanceof Error ? err.message : String(err)
+  // Last-resort recovery for stale chunks before showing the error UI.
+  if (isChunkLoadError(message) && reloadOnceForFreshAssets()) {
+    return
+  }
   const fallback = document.getElementById('loading-fallback')
   if (fallback) {
     fallback.innerHTML = `
@@ -38,6 +86,11 @@ app.use(router)
 // Handle router errors
 router.onError((err) => {
   console.error('Router Error:', err)
+  const message = err instanceof Error ? err.message : String(err)
+  // Stale chunk (new deploy) -> reload once to fetch the latest assets.
+  if (isChunkLoadError(message) && reloadOnceForFreshAssets()) {
+    return
+  }
   handleError(err, null, 'router')
 })
 
@@ -107,6 +160,13 @@ try {
   // Hide loading fallback on successful mount
   const fallback = document.getElementById('loading-fallback')
   if (fallback) fallback.style.display = 'none'
+
+  // A clean mount means assets matched: allow a future stale-chunk reload.
+  try {
+    sessionStorage.removeItem(RELOAD_KEY)
+  } catch {
+    /* ignore */
+  }
 
   setupRevealAnimations()
 } catch (err) {
