@@ -12,7 +12,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <noscript>
+        <div style="padding: 2rem; text-align: center; font-family: system-ui;">
+          <h1>Archan Arquiteture</h1>
+          <p>JavaScript é necessário para este site funcionar.</p>
+          <p>Por favor, ative o JavaScript no seu navegador.</p>
+        </div>
+      </noscript>
+      <div style="display: none;" id="loading-fallback">
+        <div style="padding: 2rem; text-align: center; font-family: system-ui; color: #382414;">
+          <h1 style="font-family: 'Playfair Display', serif;">Archan</h1>
+          <p>Carregando...</p>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
