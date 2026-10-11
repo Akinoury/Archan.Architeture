@@ -2,8 +2,5 @@ name = "archan-architecture"
 compatibility_date = "2024-10-11"
 pages_build_output_dir = "dist"
 
-[build]
-command = "npm run build"
-
 [vars]
 NODE_ENV = "production"
