@@ -87,9 +87,9 @@
 .card-hero-btn,
 .card-edit-btn {
   position: absolute;
-  top: 10px;
-  width: 36px;
-  height: 36px;
+  top: clamp(8px, 2vw, 10px);
+  width: clamp(32px, 2.5vw, 36px);
+  height: clamp(32px, 2.5vw, 36px);
   border-radius: 50%;
   border: 1.5px solid var(--bs-white);
   display: none;
@@ -99,17 +99,18 @@
   z-index: 15;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   font-weight: 700;
-  font-size: 14px;
+  font-size: clamp(12px, 2.2vw, 14px);
   line-height: 1;
   padding: 0;
   outline: none;
   transition: transform 0.2s ease, background 0.2s ease;
-  min-width: var(--bs-touch-target-comfortable);
-  min-height: var(--bs-touch-target-comfortable);
+  min-width: var(--bs-touch-target-comfortable, 44px);
+  min-height: var(--bs-touch-target-comfortable, 44px);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .card-del-btn {
-  right: 10px;
+  right: clamp(6px, 2vw, 10px);
   background: #c00;
   color: var(--bs-white);
 }
@@ -120,21 +121,21 @@
 }
 
 .card-star-btn {
-  left: 10px;
+  left: clamp(6px, 2vw, 10px);
   background: var(--bs-white);
   color: #555;
   border-color: #eee;
 }
 
 .card-hero-btn {
-  left: 52px;
+  left: calc(clamp(6px, 2vw, 10px) + clamp(32px, 2.5vw, 36px) + 6px);
   background: var(--bs-white);
   color: #555;
   border-color: #eee;
 }
 
 .card-edit-btn {
-  left: 94px;
+  left: calc(clamp(6px, 2vw, 10px) + 2 * (clamp(32px, 2.5vw, 36px) + 6px));
   background: var(--bs-white);
   color: #555;
   border-color: #eee;

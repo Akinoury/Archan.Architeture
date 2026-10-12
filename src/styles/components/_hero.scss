@@ -121,20 +121,26 @@
 
   .hero-cta .btn {
     width: 100%;
-    max-width: none;
+    max-width: min(90vw, 320px);
   }
 }
 
 @media (max-width: #{$breakpoint-sm}) {
   .hero {
-    padding: var(--bs-spacing-lg) var(--bs-spacing-md);
+    padding: var(--bs-spacing-lg) clamp(1rem, 4vw, var(--bs-spacing-md));
   }
 
   .hero-content .kicker {
-    letter-spacing: 0.25em;
+    letter-spacing: 0.2em;
+    gap: 0.6rem;
+  }
+
+  .hero-title {
+    font-size: clamp(2.25rem, 10vw, 3.75rem);
   }
 
   .hero-tagline {
     font-size: 0.98rem;
+    padding: 0 0.5rem;
   }
 }

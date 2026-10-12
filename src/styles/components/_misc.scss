@@ -41,24 +41,32 @@ body.dev-mode [contenteditable="true"]:focus {
 .toast-container {
   position: fixed;
   top: calc(var(--bs-nav-height) + 1rem);
-  right: 1rem;
-  left: auto;
+  right: clamp(0.5rem, 4vw, 1rem);
+  left: clamp(0.5rem, 4vw, auto);
   z-index: 1100;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  max-width: calc(100vw - 2rem);
+  max-width: calc(100vw - clamp(1rem, 8vw, 2rem));
+  align-items: flex-end;
+}
+
+@media (max-width: #{$breakpoint-sm}) {
+  .toast-container {
+    align-items: stretch;
+  }
 }
 
 .toast {
   background: var(--bs-white);
   border-left: 4px solid var(--bs-accent-color);
-  padding: 1rem 1.5rem;
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem);
   box-shadow: var(--bs-card-shadow-hover);
   border-radius: 0 4px 4px 0;
-  min-width: 280px;
-  max-width: 400px;
+  min-width: min(280px, calc(100vw - 2rem));
+  max-width: min(90vw, 400px);
   animation: slideIn 0.3s var(--bs-transition-smooth);
+  word-break: break-word;
 }
 
 .toast.error {
@@ -84,6 +92,19 @@ body.dev-mode [contenteditable="true"]:focus {
   }
 }
 
+@media (max-width: #{$breakpoint-sm}) {
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
 // Modal overlay
 .modal-overlay {
   position: fixed;
@@ -98,34 +119,38 @@ body.dev-mode [contenteditable="true"]:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--bs-spacing-md);
+  padding: clamp(var(--bs-spacing-sm), 4vw, var(--bs-spacing-md));
   animation: fadeIn 0.2s ease;
+  overscroll-behavior: contain;
 }
 
 .modal-content {
   background: var(--bs-white);
   border-radius: 0;
-  max-width: 600px;
+  max-width: min(90vw, 600px);
   width: 100%;
-  max-height: 90vh;
+  max-height: min(90vh, 90dvh);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
   animation: slideUp 0.3s var(--bs-transition-smooth);
 }
 
 .modal-header {
-  padding: var(--bs-spacing-md) var(--bs-spacing-lg);
+  padding: clamp(var(--bs-spacing-sm), 3vw, var(--bs-spacing-md)) clamp(var(--bs-spacing-sm), 3vw, var(--bs-spacing-lg));
   border-bottom: 1px solid var(--bs-light-gray);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
   gap: var(--bs-spacing-sm);
 }
 
 .modal-title {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: clamp(1.1rem, 3vw, 1.25rem);
+  word-break: break-word;
+  flex: 1;
+  min-width: 0;
 }
 
 .modal-close {
@@ -136,15 +161,21 @@ body.dev-mode [contenteditable="true"]:focus {
   color: var(--bs-dark-gray);
   line-height: 1;
   padding: 0;
-  width: 36px;
-  height: 36px;
+  width: clamp(36px, 6vw, 44px);
+  height: clamp(36px, 6vw, 44px);
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   transition: background var(--bs-transition), color var(--bs-transition);
-  min-width: var(--bs-touch-target-min);
-  min-height: var(--bs-touch-target-min);
+  min-width: var(--bs-touch-target-min, 44px);
+  min-height: var(--bs-touch-target-min, 44px);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.modal-close-icon {
+  width: clamp(18px, 4vw, 20px);
+  height: clamp(18px, 4vw, 20px);
 }
 
 .modal-close:hover {
@@ -153,15 +184,20 @@ body.dev-mode [contenteditable="true"]:focus {
 }
 
 .modal-body {
-  padding: var(--bs-spacing-lg);
+  padding: clamp(var(--bs-spacing-sm), 3vw, var(--bs-spacing-lg));
 }
 
 .modal-footer {
-  padding: var(--bs-spacing-md) var(--bs-spacing-lg);
+  padding: clamp(var(--bs-spacing-sm), 3vw, var(--bs-spacing-md)) clamp(var(--bs-spacing-sm), 3vw, var(--bs-spacing-lg));
   border-top: 1px solid var(--bs-light-gray);
   display: flex;
   justify-content: flex-end;
   gap: var(--bs-spacing-sm);
+  flex-wrap: wrap;
+}
+
+.modal-footer .btn {
+  min-width: clamp(100px, 30vw, 140px);
 }
 
 @keyframes fadeIn {
