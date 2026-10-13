@@ -100,15 +100,7 @@ onUnmounted(() => {
         </RouterLink>
       </li>
 
-      <li v-if="authStore.isAdmin">
-        <RouterLink
-          to="/dashboard"
-          class="nav-link"
-          :class="{ active: isActive('/dashboard') }"
-        >
-          Dashboard
-        </RouterLink>
-      </li>
+
 
       <!-- Auth actions inside the mobile sidebar -->
       <li class="nav-mobile-auth">
