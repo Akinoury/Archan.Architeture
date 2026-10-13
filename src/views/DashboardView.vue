@@ -350,7 +350,7 @@ watch(() => route.fullPath, syncFromRoute)
             <div v-if="activeTab === 'projects'" role="tabpanel" id="tab-projects">
               <div class="tab-head">
                 <h2>Projetos ({{ projectsStore.projects.length }})</h2>
-                <BaseButton variant="accent" @click="activeTab = 'create'">
+                <BaseButton variant="accent" @click="editingProjectId = null; editingPostId = null; resetNewProject(); resetNewPost(); activeTab = 'create'">
                   + Novo Projeto
                 </BaseButton>
               </div>
@@ -376,7 +376,7 @@ watch(() => route.fullPath, syncFromRoute)
             <div v-if="activeTab === 'blog'" role="tabpanel" id="tab-blog">
               <div class="tab-head">
                 <h2>Artigos do Blog ({{ blogStore.posts.length }})</h2>
-                <BaseButton variant="accent" @click="activeTab = 'create'">
+                <BaseButton variant="accent" @click="editingPostId = null; editingProjectId = null; resetNewPost(); resetNewProject(); activeTab = 'create'">
                   + Novo Artigo
                 </BaseButton>
               </div>
@@ -518,6 +518,8 @@ watch(() => route.fullPath, syncFromRoute)
 
 .dashboard-stats {
   margin-top: var(--bs-spacing-lg);
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .dashboard-stats h3 {
@@ -529,7 +531,14 @@ watch(() => route.fullPath, syncFromRoute)
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--bs-spacing-sm);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  word-break: break-word;
+}
+
+@media (max-width: 1200px) {
+  .dashboard-stats-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .dev-banner {
