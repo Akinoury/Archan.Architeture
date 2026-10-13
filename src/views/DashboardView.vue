@@ -395,8 +395,8 @@ watch(() => route.fullPath, syncFromRoute)
                 </BaseButton>
               </div>
 
-              <div class="form-grid form-grid-2 form-grid-lg">
-                <div v-if="!editingPostId" class="card edit-card">
+              <div class="form-grid form-grid-1 form-grid-full form-grid-lg">
+                <div v-if="!editingPostId" class="card edit-card edit-card--wide">
                   <h3>{{ editingProjectId ? 'Editar Projeto' : 'Novo Projeto' }}</h3>
                   <form @submit.prevent="handleProjectSubmit" novalidate>
                     <BaseInput v-model="newProject.title" label="Título" required placeholder="Título do projeto" :error="projectErrors.title" />
@@ -593,9 +593,18 @@ watch(() => route.fullPath, syncFromRoute)
   grid-template-columns: repeat(4, 1fr);
 }
 
+.form-grid-full {
+  grid-template-columns: 1fr !important;
+  width: 100%;
+}
+
 .edit-card {
   padding: clamp(var(--bs-spacing-md), 3vw, var(--bs-spacing-lg));
   width: 100%;
+}
+
+.edit-card--wide {
+  grid-column: 1 / -1;
 }
 
 .edit-card h3 {
