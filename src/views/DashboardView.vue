@@ -350,7 +350,7 @@ watch(() => route.fullPath, syncFromRoute)
             <div v-if="activeTab === 'projects'" role="tabpanel" id="tab-projects">
               <div class="tab-head">
                 <h2>Projetos ({{ projectsStore.projects.length }})</h2>
-                <BaseButton variant="accent" @click="editingProjectId = null; editingPostId = null; resetNewProject(); resetNewPost(); activeTab = 'create'">
+                <BaseButton variant="accent" @click="editingProjectId = null; editingPostId = null; resetNewPost(); resetNewProject(); activeTab = 'create'; newProject.currency = 'BRL'">
                   + Novo Projeto
                 </BaseButton>
               </div>
@@ -520,6 +520,7 @@ watch(() => route.fullPath, syncFromRoute)
   margin-top: var(--bs-spacing-lg);
   max-width: 100%;
   overflow: hidden;
+  padding: var(--bs-spacing-sm);
 }
 
 .dashboard-stats h3 {
@@ -530,9 +531,14 @@ watch(() => route.fullPath, syncFromRoute)
 .dashboard-stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--bs-spacing-sm);
-  font-size: 0.8rem;
+  gap: var(--bs-spacing-xs);
+  font-size: 0.75rem;
   word-break: break-word;
+  line-height: 1.4;
+}
+
+.dashboard-stats-grid > div {
+  padding: 0.25rem 0;
 }
 
 @media (max-width: 1200px) {

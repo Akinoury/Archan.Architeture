@@ -22,7 +22,7 @@
 
 .dashboard-card {
   background: var(--bs-white);
-  padding: var(--bs-spacing-md);
+  padding: clamp(var(--bs-spacing-sm), 2vw, var(--bs-spacing-md));
   box-shadow: var(--bs-card-shadow);
   border-top: 3px solid var(--bs-accent-color);
   margin-bottom: var(--bs-spacing-md);
