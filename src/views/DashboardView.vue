@@ -44,7 +44,8 @@ const newProject = ref({
   featured: false,
   hero: false,
   category: 'residential' as 'residential' | 'commercial' | 'interior',
-  tags: ''
+  tags: '',
+  currency: 'BRL' as 'BRL' | 'USD'
 })
 
 const newPost = ref({
@@ -102,7 +103,8 @@ function loadProject(project: Project) {
     featured: project.featured,
     hero: project.hero ?? false,
     category: project.category,
-    tags: project.tags.join(', ')
+    tags: project.tags.join(', '),
+    currency: (project.currency as 'BRL' | 'USD') || 'BRL'
   }
   editingProjectId.value = project.id
   projectErrors.value = {}
@@ -135,7 +137,8 @@ function resetNewProject() {
     featured: false,
     hero: false,
     category: 'residential',
-    tags: ''
+    tags: '',
+    currency: 'BRL'
   }
   projectErrors.value = {}
 }
@@ -186,7 +189,8 @@ async function handleProjectSubmit() {
       image: newProject.value.image.trim() || DEFAULT_PROJECT_IMAGE,
       title: newProject.value.title.trim(),
       description: newProject.value.description.trim(),
-      tags: splitTags(newProject.value.tags)
+      tags: splitTags(newProject.value.tags),
+      currency: newProject.value.currency
     }
     if (editingProjectId.value) {
       await projectsStore.updateProject(editingProjectId.value, payload)
@@ -261,6 +265,21 @@ function syncFromRoute() {
       activeTab.value = 'create'
     }
   }
+}
+
+function handleFileUpload(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+  if (file.size > 5 * 1024 * 1024) {
+    error('Imagem muito grande. Máximo 5MB.')
+    return
+  }
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    newProject.value.image = e.target?.result as string
+  }
+  reader.readAsDataURL(file)
 }
 
 onMounted(syncFromRoute)
@@ -382,8 +401,15 @@ watch(() => route.fullPath, syncFromRoute)
                   <form @submit.prevent="handleProjectSubmit" novalidate>
                     <BaseInput v-model="newProject.title" label="Título" required placeholder="Título do projeto" :error="projectErrors.title" />
                     <BaseInput v-model="newProject.description" label="Descrição" required placeholder="Descrição curta" :error="projectErrors.description" />
-                    <div class="form-grid form-grid-2">
-                      <BaseInput v-model.number="newProject.price" type="number" label="Preço (R$)" required min="0" step="1000" :error="projectErrors.price" />
+                    <div class="form-grid form-grid-3">
+                      <div class="form-group">
+                        <label class="form-label" for="currency">Moeda</label>
+                        <select id="currency" v-model="newProject.currency" class="form-control">
+                          <option value="BRL">BRL</option>
+                          <option value="USD">USD</option>
+                        </select>
+                      </div>
+                      <BaseInput v-model.number="newProject.price" type="number" label="Preço" required min="0" step="1000" :error="projectErrors.price" />
                       <BaseInput v-model.number="newProject.area" type="number" label="Área (m²)" required min="0" step="1" :error="projectErrors.area" />
                     </div>
                     <div class="form-grid form-grid-4">
@@ -392,7 +418,12 @@ watch(() => route.fullPath, syncFromRoute)
                       <BaseInput v-model.number="newProject.garage" type="number" label="Vagas" min="0" />
                       <BaseInput v-model.number="newProject.floors" type="number" label="Pavimentos" min="1" />
                     </div>
-                    <BaseInput v-model="newProject.image" label="Imagem (URL)" placeholder="/assets/images/..." />
+                    <div class="form-group">
+                      <label class="form-label" for="project-image">Imagem</label>
+                      <input id="project-image" type="file" accept="image/*" class="form-control" @change="handleFileUpload" />
+                      <img v-if="newProject.image" :src="newProject.image" alt="Pré-visualização" class="image-preview" />
+                      <small class="form-hint">Upload de arquivo (máx. 5MB). Salvo localmente no navegador.</small>
+                    </div>
                     <BaseInput v-model="newProject.tags" label="Tags (separadas por vírgula)" placeholder="Moderno, Sustentável, Luxo" />
                     <div class="form-grid form-grid-2 checkbox-row">
                       <label class="check-inline">
@@ -554,12 +585,17 @@ watch(() => route.fullPath, syncFromRoute)
   grid-template-columns: repeat(2, 1fr);
 }
 
+.form-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
 .form-grid-4 {
   grid-template-columns: repeat(4, 1fr);
 }
 
 .edit-card {
-  padding: var(--bs-spacing-lg);
+  padding: clamp(var(--bs-spacing-md), 3vw, var(--bs-spacing-lg));
+  width: 100%;
 }
 
 .edit-card h3 {
@@ -586,6 +622,7 @@ watch(() => route.fullPath, syncFromRoute)
 }
 
 @media (max-width: 960px) {
+  .form-grid-3,
   .form-grid-4 {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -593,6 +630,7 @@ watch(() => route.fullPath, syncFromRoute)
 
 @media (max-width: 768px) {
   .form-grid-2,
+  .form-grid-3,
   .form-grid-4 {
     grid-template-columns: 1fr;
   }
@@ -600,5 +638,22 @@ watch(() => route.fullPath, syncFromRoute)
   .form-grid-lg {
     gap: var(--bs-spacing-md);
   }
+  .edit-card {
+    padding: var(--bs-spacing-md);
+  }
+}
+
+.image-preview {
+  margin-top: 0.75rem;
+  max-width: 100%;
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border: 1px solid var(--bs-light-gray);
+  box-shadow: var(--bs-card-shadow);
+}
+
+.edit-card {
+  min-width: 0;
 }
 </style>

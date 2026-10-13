@@ -14,6 +14,7 @@ export interface Project {
   hero?: boolean
   category: 'residential' | 'commercial' | 'interior'
   tags: string[]
+  currency?: 'BRL' | 'USD'
   createdAt: string
   updatedAt: string
 }

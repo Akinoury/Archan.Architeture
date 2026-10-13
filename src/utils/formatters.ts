@@ -1,11 +1,13 @@
 // Formatters
 
-export function formatCurrency(value: number, currency = 'BRL', locale = 'pt-BR'): string {
-  return new Intl.NumberFormat(locale, {
+export function formatCurrency(value: number, currency = 'BRL', locale?: string): string {
+  const isUSD = currency === 'USD'
+  const resolvedLocale = locale || (isUSD ? 'en-US' : 'pt-BR')
+  return new Intl.NumberFormat(resolvedLocale, {
     style: 'currency',
     currency,
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0
+    maximumFractionDigits: isUSD ? 0 : 0
   }).format(value)
 }
 
