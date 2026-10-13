@@ -410,7 +410,7 @@ watch(() => route.fullPath, syncFromRoute)
                 </BaseButton>
               </div>
 
-              <div class="form-grid form-grid-1 form-grid-full form-grid-lg">
+              <div class="form-grid form-grid-full form-grid-lg">
                 <div v-if="!editingPostId" class="card edit-card edit-card--wide">
                   <h3>{{ editingProjectId ? 'Editar Projeto' : 'Novo Projeto' }}</h3>
                   <form @submit.prevent="handleProjectSubmit" novalidate>
@@ -614,17 +614,21 @@ watch(() => route.fullPath, syncFromRoute)
 }
 
 .form-grid-full {
-  grid-template-columns: 1fr !important;
+  grid-template-columns: minmax(0, 1fr) !important;
   width: 100%;
+  max-width: 100%;
 }
 
 .edit-card {
   padding: clamp(var(--bs-spacing-md), 3vw, var(--bs-spacing-lg));
   width: 100%;
+  max-width: 100%;
 }
 
 .edit-card--wide {
   grid-column: 1 / -1;
+  width: 100%;
+  max-width: 100%;
 }
 
 .edit-card h3 {
