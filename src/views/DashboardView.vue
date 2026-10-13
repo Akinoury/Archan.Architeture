@@ -411,7 +411,7 @@ watch(() => route.fullPath, syncFromRoute)
               </div>
 
               <div class="form-grid form-grid-full form-grid-lg">
-                <div v-if="!editingPostId" class="card edit-card edit-card--wide">
+                <div v-if="!editingPostId && activeTab === 'create'" class="card edit-card edit-card--wide">
                   <h3>{{ editingProjectId ? 'Editar Projeto' : 'Novo Projeto' }}</h3>
                   <form @submit.prevent="handleProjectSubmit" novalidate>
                     <BaseInput v-model="newProject.title" label="Título" required placeholder="Título do projeto" :error="projectErrors.title" />
@@ -459,7 +459,7 @@ watch(() => route.fullPath, syncFromRoute)
                   </form>
                 </div>
 
-                <div v-if="!editingProjectId" class="card edit-card">
+                <div v-if="!editingProjectId && activeTab === 'create'" class="card edit-card">
                   <h3>{{ editingPostId ? 'Editar Artigo' : 'Novo Artigo' }}</h3>
                   <form @submit.prevent="handlePostSubmit" novalidate>
                     <BaseInput v-model="newPost.title" label="Título" required placeholder="Título do artigo" :error="postErrors.title" />
