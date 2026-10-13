@@ -282,6 +282,21 @@ function handleFileUpload(event: Event) {
   reader.readAsDataURL(file)
 }
 
+function handlePostFileUpload(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+  if (file.size > 5 * 1024 * 1024) {
+    error('Imagem muito grande. Máximo 5MB.')
+    return
+  }
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    newPost.value.image = e.target?.result as string
+  }
+  reader.readAsDataURL(file)
+}
+
 onMounted(syncFromRoute)
 watch(() => route.fullPath, syncFromRoute)
 </script>
@@ -450,7 +465,12 @@ watch(() => route.fullPath, syncFromRoute)
                     <BaseInput v-model="newPost.title" label="Título" required placeholder="Título do artigo" :error="postErrors.title" />
                     <BaseInput v-model="newPost.excerpt" label="Resumo" required placeholder="Resumo curto para listagem" :error="postErrors.excerpt" />
                     <BaseInput v-model="newPost.content" label="Conteúdo (HTML)" placeholder="<h2>Título</h2><p>Conteúdo...</p>" />
-                    <BaseInput v-model="newPost.image" label="Imagem (URL)" placeholder="/assets/images/..." />
+                    <div class="form-group">
+                      <label class="form-label" for="post-image">Imagem</label>
+                      <input id="post-image" type="file" accept="image/*" class="form-control" @change="handlePostFileUpload" />
+                      <img v-if="newPost.image" :src="newPost.image" alt="Pré-visualização" class="image-preview" />
+                      <small class="form-hint">Upload de arquivo (máx. 5MB). Salvo localmente no navegador.</small>
+                    </div>
                     <BaseInput v-model="newPost.tags" label="Tags (separadas por vírgula)" placeholder="Arquitetura, Sustentabilidade, Tendências" />
                     <div class="checkbox-row">
                       <label class="check-inline">
